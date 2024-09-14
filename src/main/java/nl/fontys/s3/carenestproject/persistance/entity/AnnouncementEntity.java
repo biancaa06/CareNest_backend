@@ -1,16 +1,10 @@
-package nl.fontys.s3.carenestproject.domain.classes;
+package nl.fontys.s3.carenestproject.persistance.entity;
 
-import lombok.*;
-import lombok.experimental.SuperBuilder;
 import nl.fontys.s3.carenestproject.domain.classes.users.Manager;
 
 import java.time.LocalDate;
 
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-public class Announcement {
+public class AnnouncementEntity {
     private long id;
     private String title;
     private String description;

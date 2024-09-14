@@ -12,6 +12,7 @@ import nl.fontys.s3.carenestproject.domain.classes.users.Patient;
 @AllArgsConstructor
 @Getter
 public class HireRequest {
+    private long id;
     private Patient patient;
     private CareTaker careTaker;
     private Status status;

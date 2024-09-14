@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class Sickness {
-    private int id;
+    private long id;
     private String name;
 }

@@ -1,5 +1,10 @@
 package nl.fontys.s3.carenestproject.domain.request;
 
+import lombok.Data;
+import lombok.experimental.SuperBuilder;
+
+@SuperBuilder
+@Data
 public class CreateAccountRequest {
     private String firstName;
     private String lastName;
