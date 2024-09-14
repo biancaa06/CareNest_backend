@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface AnnouncementRepo {
     AnnouncementEntity getAnnouncementById(long id);
 
@@ -19,4 +18,5 @@ public interface AnnouncementRepo {
     AnnouncementEntity updateAnnouncement(AnnouncementEntity announcement);
 
     boolean deleteAnnouncementById(long id);
+    int countAnnouncements();
 }

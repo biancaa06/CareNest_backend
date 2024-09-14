@@ -8,5 +8,5 @@ import nl.fontys.s3.carenestproject.domain.classes.Sickness;
 
 public class PatientEntity extends UserEntity {
     private String personalDescription;
-    private Sickness sickness;
+    private SicknessEntity sickness;
 }

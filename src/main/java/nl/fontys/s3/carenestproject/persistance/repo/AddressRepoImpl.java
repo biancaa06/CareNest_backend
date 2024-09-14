@@ -4,11 +4,12 @@ import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import nl.fontys.s3.carenestproject.persistance.entity.AddressEntity;
 import nl.fontys.s3.carenestproject.service.repoInterfaces.AddressRepo;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@SuperBuilder
-@Data
+
+@Repository
 public class AddressRepoImpl implements AddressRepo {
 
     private List<AddressEntity> addresses;

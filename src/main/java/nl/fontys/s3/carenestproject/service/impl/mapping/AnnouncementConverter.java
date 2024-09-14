@@ -11,18 +11,17 @@ public final class AnnouncementConverter {
                 .id(announcementEntity.getId())
                 .title(announcementEntity.getTitle())
                 .description(announcementEntity.getDescription())
-                .author(announcementEntity.getAuthor())
+                .author(ManagerConverter.convertFromEntityToBase(announcementEntity.getAuthor()))
                 .date(announcementEntity.getDate())
                 .build();
     }
 
     public static AnnouncementEntity convertFromBaseToEntity(Announcement announcement) {
-        AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setId(announcement.getId());
-        announcementEntity.setTitle(announcement.getTitle());
-        announcementEntity.setDescription(announcement.getDescription());
-        announcementEntity.setAuthor(announcement.getAuthor());
-        announcementEntity.setDate(announcement.getDate());
-        return announcementEntity;
+        return AnnouncementEntity.builder()
+                .id(announcement.getId())
+                .title(announcement.getTitle())
+                .description(announcement.getDescription())
+                .date(announcement.getDate())
+                .author(ManagerConverter.convertFromBaseToEntity(announcement.getAuthor())).build();
     }
 }

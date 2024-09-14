@@ -9,5 +9,5 @@ import nl.fontys.s3.carenestproject.domain.classes.Availability;
 public class CareTakerEntity extends UserEntity {
     private String personalDescription;
     private double salaryPerHour;
-    private Availability availability;
+    private String availability;
 }

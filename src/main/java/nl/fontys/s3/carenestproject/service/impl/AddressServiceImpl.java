@@ -1,5 +1,7 @@
 package nl.fontys.s3.carenestproject.service.impl;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import nl.fontys.s3.carenestproject.domain.classes.Address;
@@ -9,11 +11,10 @@ import nl.fontys.s3.carenestproject.service.repoInterfaces.AddressRepo;
 import org.springframework.stereotype.Service;
 
 @Service
-@SuperBuilder
-@Data
+@Builder
 public class AddressServiceImpl implements AddressService {
 
-    private AddressRepo addressRepo;
+    private final AddressRepo addressRepo;
 
     @Override
     public Address getAddressById(long id) {
@@ -21,9 +22,9 @@ public class AddressServiceImpl implements AddressService {
 
         return Address.builder()
                 .id(addressEntity.getId())
-                .Country(addressEntity.getCountry())
-                .City(addressEntity.getCity())
-                .Street(addressEntity.getStreet())
+                .country(addressEntity.getCountry())
+                .city(addressEntity.getCity())
+                .street(addressEntity.getStreet())
                 .number(addressEntity.getNumber())
                 .build();
     }
@@ -32,9 +33,9 @@ public class AddressServiceImpl implements AddressService {
     public Address createAddress(Address address) {
 
         AddressEntity addressEntity = AddressEntity.builder()
-                .Country(address.getCountry())
-                .City(address.getCity())
-                .Street(address.getStreet())
+                .country(address.getCountry())
+                .city(address.getCity())
+                .street(address.getStreet())
                 .number(address.getNumber()).
                 build();
 

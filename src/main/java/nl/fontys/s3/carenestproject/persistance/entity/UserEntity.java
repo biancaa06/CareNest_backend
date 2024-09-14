@@ -17,6 +17,6 @@ public abstract class UserEntity {
     private String email;
     private String password;
     private String phoneNumber;
-    private Address address;
-    private Gender gender;
+    private AddressEntity address;
+    private String gender;
 }

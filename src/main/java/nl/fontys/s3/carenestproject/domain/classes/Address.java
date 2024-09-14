@@ -8,8 +8,8 @@ import lombok.*;
 @Data
 public class Address {
     private long id;
-    private String Country;
-    private String City;
-    private String Street;
+    private String country;
+    private String city;
+    private String street;
     private int number;
 }

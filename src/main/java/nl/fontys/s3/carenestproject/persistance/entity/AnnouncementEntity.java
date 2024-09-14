@@ -16,6 +16,6 @@ public class AnnouncementEntity {
     private long id;
     private String title;
     private String description;
-    private Manager author;
+    private ManagerEntity author;
     private LocalDate date;
 }
