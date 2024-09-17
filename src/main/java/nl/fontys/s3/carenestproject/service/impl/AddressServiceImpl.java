@@ -1,9 +1,6 @@
 package nl.fontys.s3.carenestproject.service.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.experimental.SuperBuilder;
 import nl.fontys.s3.carenestproject.domain.classes.Address;
 import nl.fontys.s3.carenestproject.persistance.entity.AddressEntity;
 import nl.fontys.s3.carenestproject.service.AddressService;

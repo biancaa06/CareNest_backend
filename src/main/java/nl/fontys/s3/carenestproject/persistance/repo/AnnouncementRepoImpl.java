@@ -2,6 +2,7 @@ package nl.fontys.s3.carenestproject.persistance.repo;
 
 import nl.fontys.s3.carenestproject.persistance.entity.AnnouncementEntity;
 import nl.fontys.s3.carenestproject.service.repoInterfaces.AnnouncementRepo;
+import nl.fontys.s3.carenestproject.service.repoInterfaces.ManagerRepo;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -12,9 +13,20 @@ import java.util.List;
 public class AnnouncementRepoImpl implements AnnouncementRepo {
 
     private List<AnnouncementEntity> announcements;
-    private static long NEXT_ID = 1;
+    private final ManagerRepo managerRepo;
+    private static long NEXT_ID = 2;
 
-    public AnnouncementRepoImpl() {announcements = new ArrayList<AnnouncementEntity>();}
+    public AnnouncementRepoImpl() {
+        announcements = new ArrayList<>();
+        managerRepo = new ManagerRepoImpl();
+        announcements.add(AnnouncementEntity.builder()
+                        .id(1)
+                        .title("health")
+                        .description("take care")
+                        .author(managerRepo.getManagerById(1))
+                .build()
+        );
+    }
 
     @Override
     public AnnouncementEntity getAnnouncementById(long id) {

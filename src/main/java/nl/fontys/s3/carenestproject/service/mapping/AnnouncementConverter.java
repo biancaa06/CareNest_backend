@@ -1,4 +1,4 @@
-package nl.fontys.s3.carenestproject.service.impl.mapping;
+package nl.fontys.s3.carenestproject.service.mapping;
 
 import nl.fontys.s3.carenestproject.domain.classes.Announcement;
 import nl.fontys.s3.carenestproject.persistance.entity.AnnouncementEntity;

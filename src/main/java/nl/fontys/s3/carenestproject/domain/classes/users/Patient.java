@@ -1,19 +1,15 @@
 package nl.fontys.s3.carenestproject.domain.classes.users;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
-import nl.fontys.s3.carenestproject.domain.classes.Address;
-import nl.fontys.s3.carenestproject.domain.classes.Gender;
 import nl.fontys.s3.carenestproject.domain.classes.Sickness;
 
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-public class Patient extends User {
+@Data
+public class Patient {
+    private User baseUser;
     private String personalDescription;
     private Sickness sickness;
 }

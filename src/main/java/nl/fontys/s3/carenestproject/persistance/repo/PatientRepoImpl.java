@@ -4,6 +4,6 @@ import lombok.experimental.SuperBuilder;
 import nl.fontys.s3.carenestproject.service.repoInterfaces.PatientRepo;
 
 @SuperBuilder
-public class PatientRepoImpl extends UserRepoImpl implements PatientRepo {
+public class PatientRepoImpl implements PatientRepo {
 
 }
