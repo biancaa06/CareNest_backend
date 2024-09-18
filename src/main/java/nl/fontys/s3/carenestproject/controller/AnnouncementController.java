@@ -2,9 +2,9 @@ package nl.fontys.s3.carenestproject.controller;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.domain.classes.Announcement;
-import nl.fontys.s3.carenestproject.domain.request.CreateAnnouncementRequest;
-import nl.fontys.s3.carenestproject.domain.response.CreateAnnouncementResponse;
 import nl.fontys.s3.carenestproject.service.AnnouncementService;
+import nl.fontys.s3.carenestproject.service.request.CreateAnnouncementRequest;
+import nl.fontys.s3.carenestproject.service.response.CreateAnnouncementResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

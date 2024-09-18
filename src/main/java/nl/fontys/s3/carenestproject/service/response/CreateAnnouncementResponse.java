@@ -1,4 +1,4 @@
-package nl.fontys.s3.carenestproject.domain.response;
+package nl.fontys.s3.carenestproject.service.response;
 
 import lombok.Data;
 import lombok.experimental.SuperBuilder;

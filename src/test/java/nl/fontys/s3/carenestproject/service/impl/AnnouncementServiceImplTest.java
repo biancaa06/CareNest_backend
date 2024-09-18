@@ -1,8 +1,7 @@
 package nl.fontys.s3.carenestproject.service.impl;
 
-import nl.fontys.s3.carenestproject.domain.classes.Announcement;
-import nl.fontys.s3.carenestproject.domain.request.CreateAnnouncementRequest;
-import nl.fontys.s3.carenestproject.domain.response.CreateAnnouncementResponse;
+import nl.fontys.s3.carenestproject.service.request.CreateAnnouncementRequest;
+import nl.fontys.s3.carenestproject.service.response.CreateAnnouncementResponse;
 import nl.fontys.s3.carenestproject.persistance.repo.AnnouncementRepoImpl;
 import nl.fontys.s3.carenestproject.persistance.repo.ManagerRepoImpl;
 import org.junit.jupiter.api.Test;
