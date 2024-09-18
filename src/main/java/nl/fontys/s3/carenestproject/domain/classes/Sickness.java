@@ -1,14 +1,11 @@
 package nl.fontys.s3.carenestproject.domain.classes;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
 public class Sickness {
     private long id;
     private String name;
