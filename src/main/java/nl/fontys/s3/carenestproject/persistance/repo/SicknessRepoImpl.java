@@ -43,7 +43,7 @@ public class SicknessRepoImpl implements SicknessRepo {
 
     @Override
     public SicknessEntity createSickness(SicknessEntity sickness) {
-        if(checkExistingSickness(sickness)) {
+        if(!checkExistingSickness(sickness)) {
             sickness.setId(NEXT_ID);
             sicknesses.add(sickness);
             NEXT_ID++;

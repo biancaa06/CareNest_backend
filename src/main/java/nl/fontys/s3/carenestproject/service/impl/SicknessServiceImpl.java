@@ -6,12 +6,15 @@ import nl.fontys.s3.carenestproject.persistance.entity.SicknessEntity;
 import nl.fontys.s3.carenestproject.service.SicknessService;
 import nl.fontys.s3.carenestproject.service.mapping.SicknessConverter;
 import nl.fontys.s3.carenestproject.service.repoInterfaces.SicknessRepo;
+import nl.fontys.s3.carenestproject.service.request.CreateSicknessRequest;
+import nl.fontys.s3.carenestproject.service.response.CreateSicknessResponse;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
+@Service
 @AllArgsConstructor
 public class SicknessServiceImpl implements SicknessService {
 
@@ -19,7 +22,9 @@ public class SicknessServiceImpl implements SicknessService {
 
     @Override
     public Sickness getSicknessById(long id) {
-        return SicknessConverter.convertFromEntityToBase(sicknessRepo.getSicknessById(id));
+        SicknessEntity sicknessEntity =sicknessRepo.getSicknessById(id);
+        if(sicknessEntity == null) return null;
+        else return SicknessConverter.convertFromEntityToBase(sicknessEntity);
     }
 
     @Override
@@ -33,13 +38,22 @@ public class SicknessServiceImpl implements SicknessService {
     }
 
     @Override
-    public Sickness createSickness(Sickness sickness) {
-        SicknessEntity sicknessEntity = sicknessRepo.createSickness(SicknessConverter.convertFromBaseToEntity(sickness));
-        return SicknessConverter.convertFromEntityToBase(sicknessEntity);
+    public CreateSicknessResponse createSickness(CreateSicknessRequest request) {
+
+        if (request.getName() == null) {
+            throw new IllegalArgumentException("Sickness name cannot be null");
+        }
+
+        SicknessEntity sicknessEntity = SicknessEntity.builder().name(request.getName()).build();
+        sicknessEntity = sicknessRepo.createSickness(sicknessEntity);
+        return CreateSicknessResponse.builder().id(sicknessEntity.getId()).name(sicknessEntity.getName()).build();
     }
 
     @Override
     public void deleteSickness(Sickness sickness) {
+        if (sickness == null || sickness.getId() <= 0) {
+            throw new IllegalArgumentException("Invalid sickness input.");
+        }
         sicknessRepo.deleteSicknessById(sickness.getId());
     }
 }
