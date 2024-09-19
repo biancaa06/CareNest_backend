@@ -1,14 +1,10 @@
 package nl.fontys.s3.carenestproject.service;
 
-import nl.fontys.s3.carenestproject.domain.classes.Address;
 import nl.fontys.s3.carenestproject.domain.classes.Announcement;
-import nl.fontys.s3.carenestproject.domain.request.CreateAccountRequest;
-import nl.fontys.s3.carenestproject.domain.request.CreateAnnouncementRequest;
-import nl.fontys.s3.carenestproject.domain.response.CreateAnnouncementResponse;
-import org.springframework.stereotype.Service;
+import nl.fontys.s3.carenestproject.service.request.CreateAnnouncementRequest;
+import nl.fontys.s3.carenestproject.service.response.CreateAnnouncementResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AnnouncementService {
     public Announcement getAnnouncementById(long id);

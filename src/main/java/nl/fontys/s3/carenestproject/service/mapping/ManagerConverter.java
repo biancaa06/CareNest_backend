@@ -4,7 +4,7 @@ import nl.fontys.s3.carenestproject.domain.classes.Position;
 import nl.fontys.s3.carenestproject.domain.classes.users.Manager;
 import nl.fontys.s3.carenestproject.persistance.entity.ManagerEntity;
 
-public class ManagerConverter {
+public final class ManagerConverter {
     private ManagerConverter() {}
 
     public static Manager convertFromEntityToBase(ManagerEntity managerEntity) {
