@@ -2,6 +2,7 @@ package nl.fontys.s3.carenestproject.service.request;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 
 
 @Builder
