@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.domain.classes.Sickness;
 import nl.fontys.s3.carenestproject.service.SicknessService;
 import nl.fontys.s3.carenestproject.service.request.CreateSicknessRequest;
+import nl.fontys.s3.carenestproject.service.request.UpdateSicknessRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateSicknessResponse;
+import nl.fontys.s3.carenestproject.service.response.UpdateSicknessResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,5 +36,18 @@ public class SicknessController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/id:{id}")
+    public ResponseEntity<UpdateSicknessResponse> updateSickness(@PathVariable(value = "id") long id, @RequestBody @Validated UpdateSicknessRequest request) {
+        try{
+            request.setSicknessId(id);
+            UpdateSicknessResponse response = sicknessService.updateSickness(request);
+
+            return ResponseEntity.ok().body(response);
+        }
+        catch(IllegalArgumentException e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

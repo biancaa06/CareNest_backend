@@ -62,4 +62,16 @@ public class SicknessRepoImpl implements SicknessRepo {
     public void deleteSicknessById(long id) {
         sicknesses.removeIf(sickness -> sickness.getId() == id);
     }
+
+    @Override
+    public SicknessEntity updateSickness(SicknessEntity sickness) {
+        SicknessEntity sicknessToUpdate = getSicknessById(sickness.getId());
+        if(sicknessToUpdate != null) {
+            sicknessToUpdate.setName(sickness.getName());
+            return sicknessToUpdate;
+        }
+        else throw new IndexOutOfBoundsException("Sickness not found");
+    }
+
+
 }

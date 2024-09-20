@@ -9,5 +9,6 @@ public interface SicknessRepo {
     public List<SicknessEntity> getAllSicknesses();
     public SicknessEntity createSickness(SicknessEntity sickness);
     public void deleteSicknessById(long id);
+    public SicknessEntity updateSickness(SicknessEntity sickness);
 
 }
