@@ -1,12 +1,10 @@
 package nl.fontys.s3.carenestproject.persistance.entity;
 
-import lombok.Data;
 import lombok.experimental.SuperBuilder;
-import nl.fontys.s3.carenestproject.domain.classes.Availability;
 
 @SuperBuilder
 
-public class CareTakerEntity extends UserEntity {
+public class CareTakerEntity{
     private String personalDescription;
     private double salaryPerHour;
     private String availability;

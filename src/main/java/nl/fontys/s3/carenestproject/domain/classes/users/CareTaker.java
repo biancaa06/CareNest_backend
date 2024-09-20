@@ -10,7 +10,8 @@ import nl.fontys.s3.carenestproject.domain.classes.Availability;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class CareTaker extends User {
+public class CareTaker{
+    private User baseUser;
     private String personalDescription;
     private double salaryPerHour;
     private Availability availability;

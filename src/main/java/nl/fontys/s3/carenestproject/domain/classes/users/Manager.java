@@ -1,7 +1,6 @@
 package nl.fontys.s3.carenestproject.domain.classes.users;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -11,6 +10,7 @@ import nl.fontys.s3.carenestproject.domain.classes.Position;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Manager extends User {
+public class Manager {
+    private User baseUser;
     private Position position;
 }

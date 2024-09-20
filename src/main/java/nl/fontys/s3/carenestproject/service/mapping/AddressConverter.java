@@ -1,9 +1,9 @@
-package nl.fontys.s3.carenestproject.service.impl.mapping;
+package nl.fontys.s3.carenestproject.service.mapping;
 
 import nl.fontys.s3.carenestproject.domain.classes.Address;
 import nl.fontys.s3.carenestproject.persistance.entity.AddressEntity;
 
-public class AddressConverter {
+public final class AddressConverter {
     private AddressConverter() {}
 
     public static Address convertFromEntityToBase(AddressEntity addressEntity) {

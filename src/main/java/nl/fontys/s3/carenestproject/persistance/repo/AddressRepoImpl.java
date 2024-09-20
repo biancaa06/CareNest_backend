@@ -1,11 +1,10 @@
 package nl.fontys.s3.carenestproject.persistance.repo;
 
-import lombok.Data;
-import lombok.experimental.SuperBuilder;
 import nl.fontys.s3.carenestproject.persistance.entity.AddressEntity;
 import nl.fontys.s3.carenestproject.service.repoInterfaces.AddressRepo;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -15,14 +14,47 @@ public class AddressRepoImpl implements AddressRepo {
     private List<AddressEntity> addresses;
     private static long NEXT_ID = 1;
 
+    public AddressRepoImpl() {
+        addresses = new ArrayList<>();
+        addresses.add(AddressEntity.builder()
+                        .id(1L)
+                        .country("Netherlands")
+                        .city("Eindhoven")
+                        .street("Street")
+                        .number(56)
+                        .build()
+                );
+        addresses.add(AddressEntity.builder()
+                        .id(2L)
+                        .country("Netherlands")
+                        .city("Eindhoven")
+                        .street("Street")
+                        .number(48)
+                        .build()
+                );
+    }
+
     @Override
     public AddressEntity addAddress(AddressEntity address) {
-        address.setId(NEXT_ID);
-        NEXT_ID++;
+        if(!checkExistingAddress(address)) {
+            address.setId(NEXT_ID);
+            NEXT_ID++;
 
-        addresses.add(address);
+            addresses.add(address);
 
-        return address;
+            return address;
+        }
+        return null;
+    }
+    private boolean checkExistingAddress(AddressEntity address) {
+        for (AddressEntity addressEntity : addresses) {
+            if (addressEntity.getCountry().equals(address.getCountry()) &&
+                    addressEntity.getCity().equals(address.getCity()) &&
+                    addressEntity.getStreet().equals(address.getStreet()) && addressEntity.getNumber()==address.getNumber()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

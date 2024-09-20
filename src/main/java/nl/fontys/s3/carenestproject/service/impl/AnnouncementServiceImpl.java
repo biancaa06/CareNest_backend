@@ -2,15 +2,17 @@ package nl.fontys.s3.carenestproject.service.impl;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.domain.classes.Announcement;
-import nl.fontys.s3.carenestproject.domain.request.CreateAnnouncementRequest;
-import nl.fontys.s3.carenestproject.domain.response.CreateAnnouncementResponse;
+import nl.fontys.s3.carenestproject.service.request.CreateAnnouncementRequest;
+import nl.fontys.s3.carenestproject.service.response.CreateAnnouncementResponse;
 import nl.fontys.s3.carenestproject.persistance.entity.AnnouncementEntity;
 import nl.fontys.s3.carenestproject.service.AnnouncementService;
-import nl.fontys.s3.carenestproject.service.impl.mapping.AnnouncementConverter;
-import nl.fontys.s3.carenestproject.service.impl.mapping.ManagerConverter;
+import nl.fontys.s3.carenestproject.service.ManagerService;
+import nl.fontys.s3.carenestproject.service.mapping.AnnouncementConverter;
+import nl.fontys.s3.carenestproject.service.mapping.ManagerConverter;
 import nl.fontys.s3.carenestproject.service.repoInterfaces.AnnouncementRepo;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -18,6 +20,7 @@ import java.util.List;
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final AnnouncementRepo announcementRepo;
+    private final ManagerService managerService;
 
 
     @Override
@@ -66,15 +69,16 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest request) {
         AnnouncementEntity announcementEntity = AnnouncementEntity.builder()
                 .title(request.getTitle())
-                .author(ManagerConverter.convertFromBaseToEntity(request.getAuthor()))
-                .date(request.getDate()).build();
+                .description(request.getDescription())
+                .author(ManagerConverter.convertFromBaseToEntity(managerService.getManagerById(request.getAuthorId())))
+                .date(LocalDate.now()).build();
 
         AnnouncementEntity savedEntity = announcementRepo.createAnnouncement(announcementEntity);
 
         return CreateAnnouncementResponse.builder()
                 .title(savedEntity.getTitle())
                 .description(savedEntity.getDescription())
-                .author(ManagerConverter.convertFromEntityToBase(savedEntity.getAuthor()))
+                .authorEmail(ManagerConverter.convertFromEntityToBase(savedEntity.getAuthor()).getBaseUser().getEmail())
                 .date(savedEntity.getDate())
                 .build();
     }

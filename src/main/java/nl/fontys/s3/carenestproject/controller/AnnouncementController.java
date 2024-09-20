@@ -3,11 +3,13 @@ package nl.fontys.s3.carenestproject.controller;
 import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.domain.classes.Announcement;
 import nl.fontys.s3.carenestproject.service.AnnouncementService;
+import nl.fontys.s3.carenestproject.service.request.CreateAnnouncementRequest;
+import nl.fontys.s3.carenestproject.service.response.CreateAnnouncementResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/announcements")
@@ -37,6 +39,22 @@ public class AnnouncementController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(announcement);
+    }
+
+    @PostMapping()
+    public ResponseEntity<CreateAnnouncementResponse> addAnnouncement(@RequestBody @Validated CreateAnnouncementRequest announcement){
+        CreateAnnouncementResponse response = announcementService.createAnnouncement(announcement);
+        if (response == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/id:{id}")
+    public ResponseEntity<Void> deleteAnnouncement(@PathVariable(value="id") final long id){
+        announcementService.deleteAnnouncement(id);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
