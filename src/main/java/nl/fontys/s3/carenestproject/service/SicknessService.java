@@ -10,8 +10,8 @@ import java.util.List;
 
 public interface SicknessService {
     public Sickness getSicknessById(long id);
-    public List<Sickness> getAllSicknesses();
-    public CreateSicknessResponse createSickness(CreateSicknessRequest request);
+    //public List<Sickness> getAllSicknesses();
+    //public CreateSicknessResponse createSickness(CreateSicknessRequest request);
     public void deleteSickness(Sickness sickness);
-    public UpdateSicknessResponse updateSickness(UpdateSicknessRequest request);
+    //public UpdateSicknessResponse updateSickness(UpdateSicknessRequest request);
 }

@@ -9,8 +9,8 @@ import java.util.List;
 public interface AnnouncementService {
     public Announcement getAnnouncementById(long id);
     public Announcement getAnnouncementByTitle(String title);
-    public List<Announcement> getAllAnnouncements();
-    public CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest request);
-    public Announcement updateAnnouncement(Announcement announcement);
+    //public List<Announcement> getAllAnnouncements();
+    //public CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest request);
+    //public Announcement updateAnnouncement(Announcement announcement);
     public boolean deleteAnnouncement(long id);
 }

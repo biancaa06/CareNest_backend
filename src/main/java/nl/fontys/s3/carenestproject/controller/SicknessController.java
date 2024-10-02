@@ -20,25 +20,25 @@ public class SicknessController {
 
     private final SicknessService sicknessService;
 
-    @GetMapping()
+    /*@GetMapping()
     public ResponseEntity<List<Sickness>> getSickness() {
         return ResponseEntity.ok(sicknessService.getAllSicknesses());
-    }
+    }*/
     @GetMapping("/id:{id}")
     public ResponseEntity<Sickness> getSicknessById(@PathVariable long id) {
         return ResponseEntity.ok(sicknessService.getSicknessById(id));
     }
 
-    @PostMapping()
+    /*@PostMapping()
     public ResponseEntity<CreateSicknessResponse> createSickness(@RequestBody @Validated CreateSicknessRequest request) {
         CreateSicknessResponse response = sicknessService.createSickness(request);
         if (response == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(response);
-    }
+    }*/
 
-    @PutMapping("/id:{id}")
+    /*@PutMapping("/id:{id}")
     public ResponseEntity<UpdateSicknessResponse> updateSickness(@PathVariable(value = "id") long id, @RequestBody @Validated UpdateSicknessRequest request) {
         try{
             request.setSicknessId(id);
@@ -49,5 +49,5 @@ public class SicknessController {
         catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().build();
         }
-    }
+    }*/
 }

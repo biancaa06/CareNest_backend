@@ -4,7 +4,7 @@ import lombok.Builder;
 import nl.fontys.s3.carenestproject.domain.classes.users.Manager;
 import nl.fontys.s3.carenestproject.service.ManagerService;
 import nl.fontys.s3.carenestproject.service.mapping.ManagerConverter;
-import nl.fontys.s3.carenestproject.service.repoInterfaces.ManagerRepo;
+import nl.fontys.s3.carenestproject.persistance.repoInterfaces.ManagerRepo;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +15,6 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Manager getManagerById(long id) {
-        return ManagerConverter.convertFromEntityToBase(managerRepo.getManagerById(id));
+        return ManagerConverter.convertFromEntityToBase(managerRepo.getManagerEntityById(id));
     }
 }

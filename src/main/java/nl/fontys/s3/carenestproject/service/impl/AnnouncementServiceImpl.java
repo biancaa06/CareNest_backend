@@ -2,6 +2,7 @@ package nl.fontys.s3.carenestproject.service.impl;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.domain.classes.Announcement;
+import nl.fontys.s3.carenestproject.persistance.repoInterfaces.AnnouncementRepo;
 import nl.fontys.s3.carenestproject.service.request.CreateAnnouncementRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateAnnouncementResponse;
 import nl.fontys.s3.carenestproject.persistance.entity.AnnouncementEntity;
@@ -9,7 +10,6 @@ import nl.fontys.s3.carenestproject.service.AnnouncementService;
 import nl.fontys.s3.carenestproject.service.ManagerService;
 import nl.fontys.s3.carenestproject.service.mapping.AnnouncementConverter;
 import nl.fontys.s3.carenestproject.service.mapping.ManagerConverter;
-import nl.fontys.s3.carenestproject.service.repoInterfaces.AnnouncementRepo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,7 +25,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public Announcement getAnnouncementById(long id) {
-        AnnouncementEntity announcementEntity = announcementRepo.getAnnouncementById(id);
+        AnnouncementEntity announcementEntity = announcementRepo.findAnnouncementEntityById(id);
 
         if(announcementEntity != null) {
             return Announcement.builder()
@@ -42,7 +42,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public Announcement getAnnouncementByTitle(String title) {
-        AnnouncementEntity announcementEntity = announcementRepo.getAnnouncementByTitle(title);
+        AnnouncementEntity announcementEntity = announcementRepo.findAnnouncementEntityByTitle(title);
 
         if(announcementEntity != null) {
             return Announcement.builder()
@@ -57,15 +57,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return null;
     }
 
-    @Override
+    /*@Override
     public List<Announcement> getAllAnnouncements() {
-        return announcementRepo.getAnnouncements()
+        return announcementRepo.getAllAnnouncements()
                 .stream()
                 .map(AnnouncementConverter :: convertFromEntityToBase)
                 .toList();
-    }
+    }*/
 
-    @Override
+    /*@Override
     public CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest request) {
         AnnouncementEntity announcementEntity = AnnouncementEntity.builder()
                 .title(request.getTitle())
@@ -78,19 +78,19 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return CreateAnnouncementResponse.builder()
                 .title(savedEntity.getTitle())
                 .description(savedEntity.getDescription())
-                .authorEmail(ManagerConverter.convertFromEntityToBase(savedEntity.getAuthor()).getBaseUser().getEmail())
+                .author(ManagerConverter.convertFromEntityToBase(savedEntity.getAuthor()))
                 .date(savedEntity.getDate())
                 .build();
-    }
+    }*/
 
-    @Override
+    /*@Override
     public Announcement updateAnnouncement(Announcement announcement) {
         AnnouncementEntity announcementEntity = AnnouncementConverter.convertFromBaseToEntity(announcement);
 
         AnnouncementEntity savedEntity = announcementRepo.updateAnnouncement(announcementEntity);
 
         return AnnouncementConverter.convertFromEntityToBase(savedEntity);
-    }
+    }*/
 
     @Override
     public boolean deleteAnnouncement(long id) {
