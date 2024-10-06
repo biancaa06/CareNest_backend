@@ -3,10 +3,10 @@ package nl.fontys.s3.carenestproject.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.domain.classes.Announcement;
-import nl.fontys.s3.carenestproject.domain.classes.users.Manager;
 import nl.fontys.s3.carenestproject.persistance.entity.ManagerEntity;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.AnnouncementRepo;
 import nl.fontys.s3.carenestproject.service.request.CreateAnnouncementRequest;
+import nl.fontys.s3.carenestproject.service.request.UpdateAnnouncementRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateAnnouncementResponse;
 import nl.fontys.s3.carenestproject.persistance.entity.AnnouncementEntity;
 import nl.fontys.s3.carenestproject.service.AnnouncementService;
@@ -15,7 +15,6 @@ import nl.fontys.s3.carenestproject.service.mapping.AnnouncementConverter;
 import nl.fontys.s3.carenestproject.service.mapping.ManagerConverter;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -91,14 +90,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 .build();
     }
 
-    /*@Override
-    public Announcement updateAnnouncement(Announcement announcement) {
-        AnnouncementEntity announcementEntity = AnnouncementConverter.convertFromBaseToEntity(announcement);
-
-        AnnouncementEntity savedEntity = announcementRepo.updateAnnouncement(announcementEntity);
-
-        return AnnouncementConverter.convertFromEntityToBase(savedEntity);
-    }*/
+    @Override
+    public void updateAnnouncement(long id, UpdateAnnouncementRequest announcement) {
+        announcementRepo.updateAnnouncementEntity(id, announcement.getTitle(), announcement.getDescription()    );
+    }
 
     @Override
     public void deleteAnnouncementById(long id) {

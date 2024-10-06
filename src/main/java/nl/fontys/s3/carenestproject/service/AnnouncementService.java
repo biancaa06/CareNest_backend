@@ -2,6 +2,7 @@ package nl.fontys.s3.carenestproject.service;
 
 import nl.fontys.s3.carenestproject.domain.classes.Announcement;
 import nl.fontys.s3.carenestproject.service.request.CreateAnnouncementRequest;
+import nl.fontys.s3.carenestproject.service.request.UpdateAnnouncementRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateAnnouncementResponse;
 
 import java.util.List;
@@ -11,6 +12,6 @@ public interface AnnouncementService {
     Announcement getAnnouncementByTitle(String title);
     List<Announcement> getAllAnnouncements();
     CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest request);
-    //Announcement updateAnnouncement(Announcement announcement);
+    void updateAnnouncement(long id, UpdateAnnouncementRequest announcement);
     void deleteAnnouncementById(long id);
 }
