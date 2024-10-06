@@ -2,6 +2,7 @@ package nl.fontys.s3.carenestproject.persistance.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +33,7 @@ public class AddressEntity  {
     @Column(name="street")
     private String street;
 
-    @NotBlank
+    @NotNull
     @Column(name="number")
     private int number;
 }
