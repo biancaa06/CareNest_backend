@@ -7,10 +7,10 @@ import nl.fontys.s3.carenestproject.service.response.CreateAnnouncementResponse;
 import java.util.List;
 
 public interface AnnouncementService {
-    public Announcement getAnnouncementById(long id);
-    public Announcement getAnnouncementByTitle(String title);
-    //public List<Announcement> getAllAnnouncements();
-    //public CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest request);
-    //public Announcement updateAnnouncement(Announcement announcement);
-    public boolean deleteAnnouncement(long id);
+    Announcement getAnnouncementById(long id);
+    Announcement getAnnouncementByTitle(String title);
+    List<Announcement> getAllAnnouncements();
+    CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest request);
+    //Announcement updateAnnouncement(Announcement announcement);
+    void deleteAnnouncementById(long id);
 }

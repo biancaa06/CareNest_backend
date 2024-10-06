@@ -10,10 +10,6 @@ public interface AnnouncementRepo extends JpaRepository<AnnouncementEntity, Long
 
     AnnouncementEntity findAnnouncementEntityByTitle(String title);
 
-    //List<AnnouncementEntity> getAllAnnouncements();
-
-    //AnnouncementEntity createAnnouncement(AnnouncementEntity announcement);
-
     //AnnouncementEntity updateAnnouncement(AnnouncementEntity announcement);
     boolean deleteAnnouncementById(long id);
     //int countAnnouncements();

@@ -2,6 +2,7 @@ package nl.fontys.s3.carenestproject.persistance.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,12 +19,14 @@ public class ManagerEntity {
     @Id
     private Long id;
 
+    @NotNull
     @OneToOne
     @MapsId
     @JoinColumn(name = "base_user_id")
     private UserEntity baseUser;
 
-    @NotBlank
-    @Column(name = "position")
-    private String position;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "position_id")
+    private PositionEntity position;
 }

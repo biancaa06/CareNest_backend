@@ -6,14 +6,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@Entity
 @Data
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name="Sickness")
-public class SicknessEntity {
+@Table(name="Position")
+public class PositionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +22,6 @@ public class SicknessEntity {
     private long id;
 
     @NotBlank
-    @Column(nullable = false, name="name")
-    private String name;
+    @Column(name="position_name")
+    private String positionName;
 }

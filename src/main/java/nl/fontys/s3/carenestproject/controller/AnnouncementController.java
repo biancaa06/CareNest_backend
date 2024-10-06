@@ -18,10 +18,10 @@ public class AnnouncementController {
 
     private final AnnouncementService announcementService;
 
-    /*@GetMapping()
+    @GetMapping()
     public ResponseEntity<List<Announcement>> getAllAnnouncements() {
         return ResponseEntity.ok(announcementService.getAllAnnouncements());
-    }*/
+    }
 
     @GetMapping("/id:{id}")
     public ResponseEntity<Announcement>getAnnouncementById(@PathVariable(value = "id") final long id){
@@ -41,18 +41,18 @@ public class AnnouncementController {
         return ResponseEntity.ok().body(announcement);
     }
 
-    /*@PostMapping()
+    @PostMapping()
     public ResponseEntity<CreateAnnouncementResponse> addAnnouncement(@RequestBody @Validated CreateAnnouncementRequest announcement){
         CreateAnnouncementResponse response = announcementService.createAnnouncement(announcement);
         if (response == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(response);
-    }*/
+    }
 
     @DeleteMapping("/id:{id}")
     public ResponseEntity<Void> deleteAnnouncement(@PathVariable(value="id") final long id){
-        announcementService.deleteAnnouncement(id);
+        announcementService.deleteAnnouncementById(id);
 
         return ResponseEntity.noContent().build();
     }
