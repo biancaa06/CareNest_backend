@@ -1,5 +1,6 @@
     package nl.fontys.s3.carenestproject.service.impl;
 
+    import jakarta.transaction.Transactional;
     import lombok.AllArgsConstructor;
     import nl.fontys.s3.carenestproject.domain.classes.Sickness;
     import nl.fontys.s3.carenestproject.persistance.entity.SicknessEntity;
@@ -28,17 +29,17 @@
             else return SicknessConverter.convertFromEntityToBase(sicknessEntity);
         }
 
-        /*@Override
+        @Override
         public List<Sickness> getAllSicknesses() {
-            List<SicknessEntity> sicknessEntities = sicknessRepo.getAllSicknesses();
+            List<SicknessEntity> sicknessEntities = sicknessRepo.findAll();
             List<Sickness> sicknessList = new ArrayList<>();
             for (SicknessEntity sicknessEntity : sicknessEntities) {
                 sicknessList.add(SicknessConverter.convertFromEntityToBase(sicknessEntity));
             }
             return sicknessList;
-        }*/
+        }
 
-        /*@Override
+        @Override
         public CreateSicknessResponse createSickness(CreateSicknessRequest request) {
 
             if (request.getName() == null) {
@@ -46,40 +47,40 @@
             }
 
             SicknessEntity sicknessEntity = SicknessEntity.builder().name(request.getName()).build();
-            sicknessEntity = sicknessRepo.createSickness(sicknessEntity);
+            sicknessEntity = sicknessRepo.save(sicknessEntity);
             return CreateSicknessResponse.builder().id(sicknessEntity.getId()).name(sicknessEntity.getName()).build();
-        }*/
-
-        @Override
-        public void deleteSickness(Sickness sickness) {
-            if (sickness == null || sickness.getId() <= 0) {
-                throw new IllegalArgumentException("Invalid sickness input.");
-            }
-            sicknessRepo.deleteSicknessEntityById(sickness.getId());
         }
 
-        /*@Override
-        public UpdateSicknessResponse updateSickness(UpdateSicknessRequest request) {
-            if(request.getSicknessId() <=0 || request.getNewSicknessName()==null){
+        @Override
+        @Transactional
+        public void deleteSicknessById(long id) {
+            if (id <= 0) {
+                throw new IllegalArgumentException("Invalid sickness input.");
+            }
+            sicknessRepo.deleteSicknessEntityById(id);
+        }
+
+        @Override
+        public UpdateSicknessResponse updateSickness(long id, UpdateSicknessRequest request) {
+            if(id <=0 || request.getNewSicknessName()==null){
                 throw new IllegalArgumentException("Invalid sickness input.");
             }
             else if(checkExistingSickness(request.getNewSicknessName())){
                 throw new IllegalArgumentException("Sickness already exists.");
             }
 
-            Sickness updatedSickness = SicknessConverter.convertFromEntityToBase(sicknessRepo.updateSickness(SicknessEntity.builder()
-                                            .id(request.getSicknessId())
-                                            .name(request.getNewSicknessName())
-                                            .build())
-                    );
+            SicknessEntity existingSicknessEntity = sicknessRepo.findSicknessEntityById(id);
+            existingSicknessEntity.setName(request.getNewSicknessName());
+
+            sicknessRepo.save(existingSicknessEntity);
 
             return UpdateSicknessResponse.builder()
-                    .id(updatedSickness.getId())
-                    .newName(updatedSickness.getName())
+                    .id(id)
+                    .newName(request.getNewSicknessName())
                     .build();
-        }*/
+        }
 
-        /*private boolean checkExistingSickness(String name){
+        private boolean checkExistingSickness(String name){
             List<Sickness> sicknesses = getAllSicknesses();
             for(Sickness s: sicknesses){
                 if(s.getName().equals(name)){
@@ -87,5 +88,5 @@
                 }
             }
             return false;
-        }*/
+        }
     }

@@ -3,10 +3,6 @@ package nl.fontys.s3.carenestproject.service.impl;
 import nl.fontys.s3.carenestproject.domain.classes.Sickness;
 import nl.fontys.s3.carenestproject.persistance.entity.SicknessEntity;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.SicknessRepo;
-import nl.fontys.s3.carenestproject.service.request.CreateSicknessRequest;
-import nl.fontys.s3.carenestproject.service.request.UpdateSicknessRequest;
-import nl.fontys.s3.carenestproject.service.response.CreateSicknessResponse;
-import nl.fontys.s3.carenestproject.service.response.UpdateSicknessResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,10 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -116,14 +109,14 @@ class SicknessServiceImplTest {
 
         Sickness sickness = Sickness.builder().id(1L).name("Valid Sickness").build();
 
-        sicknessService.deleteSickness(sickness);
+        sicknessService.deleteSicknessById(sickness.getId());
 
         verify(sicknessMockRepo).deleteSicknessEntityById(1L);
     }
 
     @Test
     void deleteSickness_ShouldThrowException_WhenSicknessIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> sicknessService.deleteSickness(null));
+        assertThrows(IllegalArgumentException.class, () -> sicknessService.deleteSicknessById(0L));
 
         verify(sicknessMockRepo, never()).deleteSicknessEntityById(anyLong());
     }
@@ -133,7 +126,7 @@ class SicknessServiceImplTest {
 
         Sickness invalidSickness = Sickness.builder().id(0).name("Invalid Sickness").build();
 
-        assertThrows(IllegalArgumentException.class, () -> sicknessService.deleteSickness(invalidSickness));
+        assertThrows(IllegalArgumentException.class, () -> sicknessService.deleteSicknessById(0L));
 
         verify(sicknessMockRepo, never()).deleteSicknessEntityById(anyLong());
     }
