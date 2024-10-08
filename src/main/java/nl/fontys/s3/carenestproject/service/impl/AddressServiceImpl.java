@@ -4,7 +4,8 @@ import lombok.Builder;
 import nl.fontys.s3.carenestproject.domain.classes.Address;
 import nl.fontys.s3.carenestproject.persistance.entity.AddressEntity;
 import nl.fontys.s3.carenestproject.service.AddressService;
-import nl.fontys.s3.carenestproject.service.repoInterfaces.AddressRepo;
+import nl.fontys.s3.carenestproject.service.mapping.AddressConverter;
+import nl.fontys.s3.carenestproject.persistance.repoInterfaces.AddressRepo;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,28 +16,17 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address getAddressById(long id) {
-        AddressEntity addressEntity = addressRepo.getAddressById(id);
+        AddressEntity addressEntity = addressRepo.findAddressEntityById(id);
 
-        return Address.builder()
-                .id(addressEntity.getId())
-                .country(addressEntity.getCountry())
-                .city(addressEntity.getCity())
-                .street(addressEntity.getStreet())
-                .number(addressEntity.getNumber())
-                .build();
+        return AddressConverter.convertFromEntityToBase(addressEntity);
     }
 
     @Override
     public Address createAddress(Address address) {
 
-        AddressEntity addressEntity = AddressEntity.builder()
-                .country(address.getCountry())
-                .city(address.getCity())
-                .street(address.getStreet())
-                .number(address.getNumber()).
-                build();
+        AddressEntity addressEntity = AddressConverter.convertFromBaseToEntity(address);
 
-        addressEntity = addressRepo.addAddress(addressEntity);
+        addressEntity = addressRepo.save(addressEntity);
 
         address.setId(addressEntity.getId());
         return address;

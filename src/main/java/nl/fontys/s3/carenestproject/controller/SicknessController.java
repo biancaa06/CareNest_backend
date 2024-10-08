@@ -41,13 +41,22 @@ public class SicknessController {
     @PutMapping("/id:{id}")
     public ResponseEntity<UpdateSicknessResponse> updateSickness(@PathVariable(value = "id") long id, @RequestBody @Validated UpdateSicknessRequest request) {
         try{
-            request.setSicknessId(id);
-            UpdateSicknessResponse response = sicknessService.updateSickness(request);
+            sicknessService.updateSickness(id,request);
 
-            return ResponseEntity.ok().body(response);
+            return ResponseEntity.ok().build();
         }
         catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().build();
+        }
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSickness(@PathVariable(value = "id") long id) {
+        try{
+            sicknessService.deleteSicknessById(id);
+            return ResponseEntity.noContent().build();
+        }
+        catch(IllegalArgumentException e){
+            return ResponseEntity.notFound().build();
         }
     }
 }

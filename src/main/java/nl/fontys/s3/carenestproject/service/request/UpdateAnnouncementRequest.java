@@ -4,13 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+@Builder
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class UpdateSicknessRequest {
-    @NotBlank(message = "New sickness name cannot be blank")
-    private String newSicknessName;
+public class UpdateAnnouncementRequest {
+
+    @NotBlank
+    private String title;
+
+    @NotBlank
+    private String description;
 }

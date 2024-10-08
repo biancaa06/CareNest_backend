@@ -3,17 +3,17 @@ package nl.fontys.s3.carenestproject.persistance.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@Entity
+@SuperBuilder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name="Sickness")
-public class SicknessEntity {
+@Table(name="Gender")
+public class GenderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +21,6 @@ public class SicknessEntity {
     private long id;
 
     @NotBlank
-    @Column(nullable = false, name="name")
-    private String name;
+    @Column(name="gender_name")
+    private String genderName;
 }

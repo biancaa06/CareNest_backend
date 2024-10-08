@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.domain.classes.Announcement;
 import nl.fontys.s3.carenestproject.service.AnnouncementService;
 import nl.fontys.s3.carenestproject.service.request.CreateAnnouncementRequest;
+import nl.fontys.s3.carenestproject.service.request.UpdateAnnouncementRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateAnnouncementResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -52,7 +53,14 @@ public class AnnouncementController {
 
     @DeleteMapping("/id:{id}")
     public ResponseEntity<Void> deleteAnnouncement(@PathVariable(value="id") final long id){
-        announcementService.deleteAnnouncement(id);
+        announcementService.deleteAnnouncementById(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateAnnouncement(@PathVariable(value="id") final long id, @RequestBody @Validated UpdateAnnouncementRequest announcement){
+        announcementService.updateAnnouncement(id, announcement);
 
         return ResponseEntity.noContent().build();
     }
