@@ -1,4 +1,4 @@
-package nl.fontys.s3.carenestproject.configuration.exceptionHandler;
+package nl.fontys.s3.carenestproject.configuration;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
