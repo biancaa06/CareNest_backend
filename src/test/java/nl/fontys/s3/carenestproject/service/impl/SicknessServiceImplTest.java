@@ -3,12 +3,18 @@ package nl.fontys.s3.carenestproject.service.impl;
 import nl.fontys.s3.carenestproject.domain.classes.Sickness;
 import nl.fontys.s3.carenestproject.persistance.entity.SicknessEntity;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.SicknessRepo;
+import nl.fontys.s3.carenestproject.service.request.CreateSicknessRequest;
+import nl.fontys.s3.carenestproject.service.request.UpdateSicknessRequest;
+import nl.fontys.s3.carenestproject.service.response.CreateSicknessResponse;
+import nl.fontys.s3.carenestproject.service.response.UpdateSicknessResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,13 +57,13 @@ class SicknessServiceImplTest {
 
     }
 
-    /*@Test
+    @Test
     void getAllSicknesses_ShouldReturnAllSicknesses() {
         SicknessEntity sickness1 = SicknessEntity.builder().id(1L).name("Sickness1").build();
         SicknessEntity sickness2 = SicknessEntity.builder().id(2L).name("Sickness2").build();
         SicknessEntity sickness3 = SicknessEntity.builder().id(3L).name("Sickness3").build();
 
-        when(sicknessMockRepo.getAllSicknesses()).thenReturn(List.of(sickness1, sickness2, sickness3));
+        when(sicknessMockRepo.findAll()).thenReturn(List.of(sickness1, sickness2, sickness3));
 
         List<Sickness> allSicknesses = sicknessService.getAllSicknesses();
 
@@ -65,43 +71,43 @@ class SicknessServiceImplTest {
         assertThat(allSicknesses.get(0).getName()).isEqualTo(sickness1.getName());
         assertThat(allSicknesses.get(1).getName()).isEqualTo(sickness2.getName());
         assertThat(allSicknesses.get(2).getName()).isEqualTo(sickness3.getName());
-    }*/
+    }
 
-    /*@Test
+    @Test
     void getAllSicknesses_ShouldReturnEmptyList() {
-        when(sicknessMockRepo.getAllSicknesses()).thenReturn(List.of());
+        when(sicknessMockRepo.findAll()).thenReturn(List.of());
 
         List<Sickness> allSicknesses = sicknessService.getAllSicknesses();
 
         assertThat(allSicknesses).isEmpty();
-    }*/
+    }
 
-    /*@Test
+    @Test
     void createSickness_ShouldCreateNewSickness() {
 
         CreateSicknessRequest request = CreateSicknessRequest.builder().name("Sickness").build();
 
         SicknessEntity sicknessEntity = SicknessEntity.builder().id(4L).name("Sickness").build();
 
-        when(sicknessMockRepo.createSickness(any(SicknessEntity.class))).thenReturn(sicknessEntity);
+        when(sicknessMockRepo.save(any(SicknessEntity.class))).thenReturn(sicknessEntity);
 
         CreateSicknessResponse response = sicknessService.createSickness(request);
 
-        verify(sicknessMockRepo).createSickness(any(SicknessEntity.class));
+        verify(sicknessMockRepo).save(any(SicknessEntity.class));
         assertThat(response).isNotNull();
         assertThat(response.getId()).isEqualTo(4L);
         assertThat(response.getName()).isEqualTo("Sickness");
-    }*/
+    }
 
-   /* @Test
+    @Test
     void createSickness_ShouldThrowException_WhenNameIsNull() {
 
         CreateSicknessRequest request = CreateSicknessRequest.builder().name(null).build();
 
         assertThrows(IllegalArgumentException.class, () -> sicknessService.createSickness(request));
 
-        verify(sicknessMockRepo, never()).createSickness(any(SicknessEntity.class));
-    }*/
+        verify(sicknessMockRepo, never()).save(any(SicknessEntity.class));
+    }
 
 
     @Test
@@ -131,11 +137,15 @@ class SicknessServiceImplTest {
         verify(sicknessMockRepo, never()).deleteSicknessEntityById(anyLong());
     }
 
-    /*@Test
+    @Test
     void updateSickness_ShouldUpdateSickness_validData() {
         UpdateSicknessRequest request = UpdateSicknessRequest.builder()
-                .sicknessId(1L)
                 .newSicknessName("Updated Sickness Name")
+                .build();
+
+        SicknessEntity existingEntity = SicknessEntity.builder()
+                .id(1L)
+                .name("Old Sickness Name")
                 .build();
 
         SicknessEntity updatedEntity = SicknessEntity.builder()
@@ -143,54 +153,53 @@ class SicknessServiceImplTest {
                 .name("Updated Sickness Name")
                 .build();
 
-        when(sicknessMockRepo.updateSickness(any(SicknessEntity.class))).thenReturn(updatedEntity);
+        when(sicknessMockRepo.findSicknessEntityById(1L)).thenReturn(existingEntity);
 
-        UpdateSicknessResponse response = sicknessService.updateSickness(request);
+        when(sicknessMockRepo.save(any(SicknessEntity.class))).thenReturn(updatedEntity);
+
+        UpdateSicknessResponse response = sicknessService.updateSickness(1L, request);
 
         assertThat(response).isNotNull();
         assertThat(response.getId()).isEqualTo(1L);
         assertThat(response.getNewName()).isEqualTo("Updated Sickness Name");
 
-        verify(sicknessMockRepo).updateSickness(any(SicknessEntity.class));
-    }*/
+        verify(sicknessMockRepo).save(any(SicknessEntity.class));
+    }
 
-    /*@Test
+    @Test
     void updateSickness_ShouldThrowException_WhenSicknessIdIsInvalid() {
         UpdateSicknessRequest request = UpdateSicknessRequest.builder()
-                .sicknessId(0L)
                 .newSicknessName("Updated Sickness Name")
                 .build();
 
-        assertThrows(IllegalArgumentException.class, () -> sicknessService.updateSickness(request));
+        assertThrows(IllegalArgumentException.class, () -> sicknessService.updateSickness(0L, request));
 
-        verify(sicknessMockRepo, never()).updateSickness(any(SicknessEntity.class));
-    }*/
+        verify(sicknessMockRepo, never()).save(any(SicknessEntity.class));
+    }
 
-    /*@Test
+    @Test
     void updateSickness_ShouldThrowException_WhenNewSicknessNameIsNull() {
         UpdateSicknessRequest request = UpdateSicknessRequest.builder()
-                .sicknessId(1L)
                 .newSicknessName(null)
                 .build();
 
-        assertThrows(IllegalArgumentException.class, () -> sicknessService.updateSickness(request));
+        assertThrows(IllegalArgumentException.class, () -> sicknessService.updateSickness(0L, request));
 
-        verify(sicknessMockRepo, never()).updateSickness(any(SicknessEntity.class));
-    }*/
+        verify(sicknessMockRepo, never()).save(any(SicknessEntity.class));
+    }
 
-    /*@Test
+    @Test
     void updateSickness_ShouldThrowException_WhenSicknessAlreadyExists() {
         UpdateSicknessRequest request = UpdateSicknessRequest.builder()
-                .sicknessId(1L)
                 .newSicknessName("Existing Sickness Name")
                 .build();
 
-        when(sicknessMockRepo.getAllSicknesses()).thenReturn(List.of(
+        when(sicknessMockRepo.findAll()).thenReturn(List.of(
                 SicknessEntity.builder().id(2L).name("Existing Sickness Name").build()
         ));
 
-        assertThrows(IllegalArgumentException.class, () -> sicknessService.updateSickness(request));
+        assertThrows(IllegalArgumentException.class, () -> sicknessService.updateSickness(2L,request));
 
-        verify(sicknessMockRepo, never()).updateSickness(any(SicknessEntity.class));
-    }*/
+        verify(sicknessMockRepo, never()).save(any(SicknessEntity.class));
+    }
 }
