@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum Gender {
-    MALE(1),
-    FEMALE(2),
-    OTHER(3);
+public enum Role {
+    MANAGER(1),
+    PATIENT(2),
+    CARETAKER(3);
 
     private final int value;
 }

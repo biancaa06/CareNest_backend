@@ -1,14 +1,12 @@
 package nl.fontys.s3.carenestproject.persistance.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.apache.logging.log4j.message.AsynchronouslyFormattable;
 
 @SuperBuilder
 @Data
@@ -23,33 +21,36 @@ public class UserEntity {
     @Column(name = "id")
     private long id;
 
-    @NotBlank
     @Column(name = "first_name")
+    @NotBlank
     private String firstName;
 
-    @NotBlank
     @Column(name = "last_name")
+    @NotBlank
     private String lastName;
 
-    @NotBlank
     @Column(unique = true, name = "email")
+    @NotBlank
     private String email;
 
-    @NotBlank
+    @JoinColumn(name="role_id", referencedColumnName = "id")
+    @ManyToOne
+    private RoleEntity roleId;
+
     @Column(name = "password")
+    @NotBlank
     private String password;
 
-    @NotBlank
     @Column(name = "phone_number")
+    @NotBlank
     private String phoneNumber;
 
-    @NotNull
-    @ManyToOne
     @JoinColumn(name = "address_id")
+    @ManyToOne
     private AddressEntity address;
 
-    @NotNull
-    @ManyToOne
     @JoinColumn(name = "gender_id")
+    @ManyToOne
+    @NotNull
     private GenderEntity gender;
 }

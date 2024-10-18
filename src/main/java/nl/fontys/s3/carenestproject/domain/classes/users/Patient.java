@@ -4,6 +4,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import nl.fontys.s3.carenestproject.domain.classes.Sickness;
 
+import java.util.List;
+
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,5 +13,5 @@ import nl.fontys.s3.carenestproject.domain.classes.Sickness;
 public class Patient {
     private User baseUser;
     private String personalDescription;
-    private Sickness sickness;
+    private List<Sickness> sickness;
 }

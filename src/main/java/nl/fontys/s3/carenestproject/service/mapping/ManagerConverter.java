@@ -20,7 +20,10 @@ public final class ManagerConverter {
         return ManagerEntity.builder()
                 .id(manager.getBaseUser().getId())
                 .baseUser(BaseUserConverter.convertFromBaseToEntity(manager.getBaseUser()))
-                .position(PositionEntity.builder().positionName(manager.getPosition().toString()).build())
+                .position(PositionEntity.builder()
+                        .id(manager.getPosition().getValue())
+                        .positionName(manager.getPosition().toString())
+                        .build())
                 .build();
     }
 }

@@ -12,15 +12,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="Sickness")
-public class SicknessEntity {
-
+@Table(name = "Role")
+public class RoleEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false, name="id")
+    @Column(name = "id")
+    @NotBlank
     private long id;
 
-    @Column(nullable = false, name="name")
+    @Column(name = "role_name")
     @NotBlank
-    private String name;
+    private String roleName;
 }
