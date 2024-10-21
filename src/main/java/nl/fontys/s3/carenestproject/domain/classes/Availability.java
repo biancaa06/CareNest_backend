@@ -6,8 +6,17 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum Availability {
-    PART_TIME(1),
-    FULL_TIME(2);
+    FULL_TIME(1),
+    PART_TIME(2);
 
     private final int value;
+
+    public static Availability fromNumericValue(long value) {
+        for (Availability availability : Availability.values()) {
+            if (availability.getValue() == value) {
+                return availability;
+            }
+        }
+        throw new IllegalArgumentException("Invalid availability value: " + value);
+    }
 }

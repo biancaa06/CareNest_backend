@@ -1,6 +1,7 @@
 package nl.fontys.s3.carenestproject.persistance.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,20 +13,29 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Manager")
-public class ManagerEntity {
-
+@Table(name = "Caretaker")
+public class CaretakerEntity {
     @Id
     private Long id;
 
     @MapsId
-    @JoinColumn(name = "base_user_id", referencedColumnName = "id")
+    @JoinColumn(name = "base_user_id")
     @OneToOne
     @NotNull
     private UserEntity baseUser;
 
-    @JoinColumn(name = "position_id", referencedColumnName = "id")
-    @ManyToOne
+    @Column(name="personal_description")
+    @NotBlank
+    private String personalDescription;
+
+    @Column(name="salary")
     @NotNull
-    private PositionEntity position;
+    private double salaryPerHour;
+
+    @ManyToOne
+    @JoinColumn(name="availability_id", referencedColumnName = "id")
+    @NotNull
+    private AvailabilityEntity availability;
 }
+
+

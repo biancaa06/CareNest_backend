@@ -2,6 +2,7 @@ package nl.fontys.s3.carenestproject.controller;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.service.UserService;
+import nl.fontys.s3.carenestproject.service.exception.EmailExistsException;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,17 @@ public class BaseUserController {
 
     @PostMapping()
     public ResponseEntity<CreateBaseAccountResponse> createBaseAccount(@RequestBody @Validated CreateBaseAccountRequest request) {
-        CreateBaseAccountResponse response = userService.createUser(request);
-        if (response == null) {
-            return ResponseEntity.notFound().build();
+        try{
+            CreateBaseAccountResponse response = userService.createUser(request);
+            if (response == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok().body(response);
         }
-        return ResponseEntity.ok().body(response);
+        catch (EmailExistsException e) {
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 
 }
