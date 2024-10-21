@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import nl.fontys.s3.carenestproject.domain.classes.Availability;
+import nl.fontys.s3.carenestproject.domain.classes.Sickness;
+
+import java.util.List;
 
 @SuperBuilder
 @NoArgsConstructor
@@ -15,4 +18,5 @@ public class CareTaker{
     private String personalDescription;
     private double salaryPerHour;
     private Availability availability;
+    private List<Sickness> specialisations;
 }

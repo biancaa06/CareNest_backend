@@ -6,26 +6,25 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.fontys.s3.carenestproject.persistance.entity.compositeKeys.SicknessesOfPatient_CPK;
+import nl.fontys.s3.carenestproject.persistance.entity.compositeKeys.SicknessesForCaretaker_CPK;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="SicknessesOfPatient")
-@IdClass(SicknessesOfPatient_CPK.class)
-public class SicknessesOfPatient {
-
+@Table(name="SicknessesForCaretaker")
+@IdClass(SicknessesForCaretaker_CPK.class)
+public class SicknessesForCaretaker {
     @Id
-    @JoinColumn(name="sickness_id", referencedColumnName = "id")
+    @JoinColumn(name="sickness_id")
     @ManyToOne
     @NotNull
-    private SicknessEntity sicknessId;
+    private SicknessEntity sickness;
 
     @Id
-    @JoinColumn(name="patient_id")
+    @JoinColumn(name="caretaker_id")
     @ManyToOne
     @NotNull
-    private PatientEntity patientId;
+    private CaretakerEntity caretaker;
 }

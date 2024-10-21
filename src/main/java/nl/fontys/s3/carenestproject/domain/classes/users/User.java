@@ -1,7 +1,7 @@
 package nl.fontys.s3.carenestproject.domain.classes.users;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import nl.fontys.s3.carenestproject.domain.classes.Address;
@@ -11,7 +11,7 @@ import nl.fontys.s3.carenestproject.domain.classes.Role;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
 public class User {
     private long id;
     private String firstName;

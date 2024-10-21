@@ -7,6 +7,7 @@ import nl.fontys.s3.carenestproject.persistance.entity.GenderEntity;
 import nl.fontys.s3.carenestproject.persistance.entity.UserEntity;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.UserRepo;
 import nl.fontys.s3.carenestproject.service.UserService;
+import nl.fontys.s3.carenestproject.service.exception.EmailExistsException;
 import nl.fontys.s3.carenestproject.service.mapping.BaseUserConverter;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
@@ -20,6 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public CreateBaseAccountResponse createUser(CreateBaseAccountRequest request) {
+        if(userExistsByEmail(request.getEmail())) {
+            throw new EmailExistsException();
+        }
 
         UserEntity user = UserEntity.builder()
                 .email(request.getEmail())
@@ -39,9 +43,16 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    @Override
     public User getUserById(long id){
-        UserEntity userEntity = userRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        UserEntity userEntity = userRepo.findUserEntityById(id);
+        if(userEntity == null){
+            throw new IllegalArgumentException("User not found");
+        }
         return BaseUserConverter.convertFromEntityToBase(userEntity);
+    }
+
+    private boolean userExistsByEmail(String email){
+        return userRepo.findUserEntityByEmail(email) != null;
     }
 }
