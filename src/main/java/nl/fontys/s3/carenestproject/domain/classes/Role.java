@@ -10,5 +10,5 @@ public enum Role {
     PATIENT(2),
     CARETAKER(3);
 
-    private final int value;
+    private final long value;
 }

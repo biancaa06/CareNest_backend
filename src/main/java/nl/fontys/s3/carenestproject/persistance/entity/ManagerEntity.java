@@ -19,12 +19,12 @@ public class ManagerEntity {
     private Long id;
 
     @MapsId
-    @JoinColumn(name = "base_user_id")
+    @JoinColumn(name = "base_user_id", referencedColumnName = "id")
     @OneToOne
     @NotNull
     private UserEntity baseUser;
 
-    @JoinColumn(name = "position_id")
+    @JoinColumn(name = "position_id", referencedColumnName = "id")
     @ManyToOne
     @NotNull
     private PositionEntity position;

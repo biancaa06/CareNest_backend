@@ -32,6 +32,9 @@ public class CaretakerServiceImpl implements CaretakerService {
         if (isBaseUserACaretaker(baseUser)) {
             throw new InvalidParameterException("The account you are trying to create already exists");
         }
+        if (request.getSpecialisations() == null || request.getSpecialisations().isEmpty()) {
+            throw new IllegalArgumentException("Sicknesses list cannot be empty");
+        }
 
         baseUser.setRoleId(RoleEntity.builder()
                 .id(Role.CARETAKER.getValue())

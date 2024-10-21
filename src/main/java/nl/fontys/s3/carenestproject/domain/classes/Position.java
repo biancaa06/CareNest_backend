@@ -10,4 +10,13 @@ public enum Position {
     MEDICAL(2);
 
     private final int value;
+
+    public static Position fromNumericValue(long value) {
+        for (Position position : Position.values()) {
+            if (position.getValue() == value) {
+                return position;
+            }
+        }
+        throw new IllegalArgumentException("Invalid position value: " + value);
+    }
 }
