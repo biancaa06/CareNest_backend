@@ -36,12 +36,6 @@ public class CaretakerServiceImpl implements CaretakerService {
             throw new IllegalArgumentException("Sicknesses list cannot be empty");
         }
 
-        baseUser.setRoleId(RoleEntity.builder()
-                .id(Role.CARETAKER.getValue())
-                .roleName(Role.CARETAKER.name())
-                .build());
-        userRepo.save(baseUser);
-
         Availability availability = Availability.fromNumericValue(request.getAvailabilityId());
         CaretakerEntity caretakerEntity = CaretakerEntity.builder()
                 .baseUser(baseUser)
@@ -54,6 +48,13 @@ public class CaretakerServiceImpl implements CaretakerService {
                 .build();
 
         caretakerRepo.save(caretakerEntity);
+
+        baseUser.setRoleId(RoleEntity.builder()
+                .id(Role.CARETAKER.getValue())
+                .roleName(Role.CARETAKER.name())
+                .build());
+        baseUser.setActive(true);
+        userRepo.save(baseUser);
 
         for (SicknessInputListRequest sicknessInput : request.getSpecialisations()) {
             SicknessEntity sicknessEntity = sicknessRepo.findSicknessEntityById(sicknessInput.getSicknessId());

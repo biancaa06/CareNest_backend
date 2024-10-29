@@ -27,9 +27,6 @@ public class UserServiceImpl implements UserService {
             if (existingUser.isActive()) {
                 throw new EmailExistsException();
             } else {
-                // Reactivate account
-                existingUser.setActive(true);
-                userRepo.save(existingUser);
                 return new CreateBaseAccountResponse(existingUser.getId());
             }
         }
@@ -44,7 +41,6 @@ public class UserServiceImpl implements UserService {
                         .genderName(request.getGender())
                         .build())
                 .password(request.getPassword())
-                .active(true)
                 .build();
 
         UserEntity userEntity = userRepo.save(newUser);
