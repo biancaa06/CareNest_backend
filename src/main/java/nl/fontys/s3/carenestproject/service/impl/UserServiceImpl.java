@@ -21,11 +21,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public CreateBaseAccountResponse createUser(CreateBaseAccountRequest request) {
-        if(userExistsByEmail(request.getEmail())) {
-            throw new EmailExistsException();
+        UserEntity existingUser = userRepo.findUserEntityByEmail(request.getEmail());
+
+        if (existingUser != null) {
+            if (existingUser.isActive()) {
+                throw new EmailExistsException();
+            } else {
+                // Reactivate account
+                existingUser.setActive(true);
+                userRepo.save(existingUser);
+                return new CreateBaseAccountResponse(existingUser.getId());
+            }
         }
 
-        UserEntity user = UserEntity.builder()
+        UserEntity newUser = UserEntity.builder()
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -35,9 +44,10 @@ public class UserServiceImpl implements UserService {
                         .genderName(request.getGender())
                         .build())
                 .password(request.getPassword())
+                .active(true)
                 .build();
 
-        UserEntity userEntity = userRepo.save(user);
+        UserEntity userEntity = userRepo.save(newUser);
         return CreateBaseAccountResponse.builder()
                 .id(userEntity.getId())
                 .build();
@@ -50,9 +60,5 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("User not found");
         }
         return BaseUserConverter.convertFromEntityToBase(userEntity);
-    }
-
-    private boolean userExistsByEmail(String email){
-        return userRepo.findUserEntityByEmail(email) != null;
     }
 }

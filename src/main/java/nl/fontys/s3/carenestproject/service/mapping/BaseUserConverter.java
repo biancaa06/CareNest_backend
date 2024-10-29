@@ -20,6 +20,7 @@ public final class BaseUserConverter {
                 .role(Role.valueOf(userEntity.getRoleId().getRoleName()))
                 .phoneNumber(userEntity.getPhoneNumber())
                 .address(AddressConverter.convertFromEntityToBase(userEntity.getAddress()))
+                .active(userEntity.isActive())
                 .build();
 
     }
@@ -40,6 +41,7 @@ public final class BaseUserConverter {
                         .genderName(gender.toString())
                         .build())
                 .address(AddressConverter.convertFromBaseToEntity(user.getAddress()))
+                .active(user.isActive())
                 .build();
     }
 }

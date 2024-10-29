@@ -53,4 +53,7 @@ public class UserEntity {
     @ManyToOne
     @NotNull
     private GenderEntity gender;
+
+    @Column(name="active")
+    private boolean active;
 }

@@ -5,6 +5,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class EmailExistsException extends ResponseStatusException {
     public EmailExistsException() {
-        super(HttpStatus.BAD_REQUEST,"This email is linked to an already existing account");
+        super(HttpStatus.BAD_REQUEST,"This email is linked to an already active account");
     }
 }

@@ -21,4 +21,5 @@ public class User {
     private String phoneNumber;
     private Address address;
     private Gender gender;
+    private boolean active;
 }
