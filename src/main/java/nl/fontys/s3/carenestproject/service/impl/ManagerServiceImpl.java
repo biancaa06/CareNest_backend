@@ -59,7 +59,9 @@ public class ManagerServiceImpl implements ManagerService {
 
         baseUser.setRoleId(RoleEntity.builder()
                 .id(Role.MANAGER.getValue())
-                .roleName(Role.MANAGER.name()).build());
+                .roleName(Role.MANAGER.name())
+                .build());
+        baseUser.setActive(true);
         userRepo.save(baseUser);
 
     }
