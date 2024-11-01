@@ -46,7 +46,7 @@ public class UserEntity {
     private String phoneNumber;
 
     @JoinColumn(name = "address_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private AddressEntity address;
 
     @JoinColumn(name = "gender_id")
