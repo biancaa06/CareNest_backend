@@ -14,10 +14,13 @@ import nl.fontys.s3.carenestproject.persistance.repoInterfaces.UserRepo;
 import nl.fontys.s3.carenestproject.service.ManagerService;
 import nl.fontys.s3.carenestproject.service.mapping.ManagerConverter;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.ManagerRepo;
+import nl.fontys.s3.carenestproject.service.mapping.PositionConverter;
 import nl.fontys.s3.carenestproject.service.request.CreateManagerAccountRequest;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Builder
@@ -30,7 +33,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Manager getManagerById(long id) {
-        return ManagerConverter.convertFromEntityToBase(managerRepo.getManagerEntityById(id));
+        return ManagerConverter.convertFromEntityToBase(managerRepo.findManagerEntityById(id));
     }
 
     @Override
@@ -59,8 +62,20 @@ public class ManagerServiceImpl implements ManagerService {
 
         baseUser.setRoleId(RoleEntity.builder()
                 .id(Role.MANAGER.getValue())
-                .roleName(Role.MANAGER.name()).build());
+                .roleName(Role.MANAGER.name())
+                .build());
+        baseUser.setActive(true);
         userRepo.save(baseUser);
 
+    }
+
+    public List<Manager> getManagersByPosition(long positionId) {
+        Position position = Position.fromNumericValue(positionId);
+        List<ManagerEntity> managerEntities= managerRepo.findManagerEntitiesByPosition(PositionConverter.convertFromBaseToEntity(position));
+        List<Manager> managers = new ArrayList<>();
+        for(ManagerEntity manager : managerEntities){
+            managers.add(ManagerConverter.convertFromEntityToBase(manager));
+        }
+        return managers;
     }
 }

@@ -34,6 +34,7 @@ public class PatientServiceImpl implements PatientService {
                 .id(Role.PATIENT.getValue())
                 .roleName(Role.PATIENT.name())
                 .build());
+        baseUser.setActive(true);
         patientRepo.save(patient);
         userRepo.save(baseUser);
 

@@ -19,9 +19,9 @@ public class CreateBaseAccountRequest {
     @NotBlank
     private String email;
     @NotBlank(message = "Phone number cannot be empty")
-    @Pattern(regexp = "^\\+?[0-9]{1,3}?[-.\\s]?\\(?[0-9]{1,4}?\\)?[-.\\s]?[0-9]{1,4}[-.\\s]?[0-9]{1,9}$",
-            message = "Invalid phone number format"
-    )
+//    @Pattern(regexp = "^\\+?[0-9]{1,3}?[-.\\s]?\\(?[0-9]{1,4}?\\)?[-.\\s]?[0-9]{1,4}[-.\\s]?[0-9]{1,9}$",
+//            message = "Invalid phone number format"
+//    )
     private String phoneNumber;
 
     @NotBlank
