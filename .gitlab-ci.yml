@@ -29,7 +29,7 @@ sonarqube:
       - .sonar/cache
   script:
     - ./gradlew clean test jacocoTestReport
-    - ./gradlew sonar "-Dsonar.host.url=$SONAR_HOST_URL" "-Dsonar.login=$SONAR_TOKEN" "-Dsonar.qualitygate.wait=true"
+    - ./gradlew sonarqube "-Dsonar.host.url=$SONAR_HOST_URL" "-Dsonar.login=$SONAR_TOKEN" "-Dsonar.qualitygate.wait=true" --info
   allow_failure: false
 
 
