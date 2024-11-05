@@ -9,9 +9,10 @@ import nl.fontys.s3.carenestproject.service.response.UpdateSicknessResponse;
 import java.util.List;
 
 public interface SicknessService {
-    public Sickness getSicknessById(long id);
-    public List<Sickness> getAllSicknesses();
-    public CreateSicknessResponse createSickness(CreateSicknessRequest request);
-    public void deleteSickness(Sickness sickness);
-    public UpdateSicknessResponse updateSickness(UpdateSicknessRequest request);
+    Sickness getSicknessById(long id);
+    List<Sickness> getAllSicknesses();
+    void deleteSicknessById(long id);
+    CreateSicknessResponse createSickness(CreateSicknessRequest request);
+    UpdateSicknessResponse updateSickness(long id, UpdateSicknessRequest request);
+
 }
