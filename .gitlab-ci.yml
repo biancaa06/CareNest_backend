@@ -1,4 +1,3 @@
-# Disable the Gradle daemon for Continuous Integration servers as correctness # is usually a priority over speed in CI environments. Using a fresh # runtime for each build is more reliable since the runtime is completely # isolated from any previous builds.
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
@@ -6,26 +5,29 @@ stages:
   - build
   - test
   - sonarqube
+
 build:
   stage: build
   script:
     - ./gradlew assemble
+
 test:
   stage: test
   script:
     - ./gradlew test
+
 sonarqube:
   stage: sonarqube
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
     GIT_DEPTH: "0"
-    SONAR_HOST_URL: "http://localhost:9000"  # Update to your Docker host IP or SonarQube container name
-    SONAR_TOKEN: "carenest"
+    SONAR_HOST_URL: "http://<docker_host_ip>:9000"  # Update with Docker host IP or SonarQube container address
+    SONAR_TOKEN: "carenest"  # Use the actual token generated for this project
   cache:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
   script:
-    - gradle clean test jacocoTestReport
-    - gradle sonarqube -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.qualitygate.wait=true
+    - ./gradlew clean test jacocoTestReport
+    - ./gradlew sonarqube -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.qualitygate.wait=true
   allow_failure: false
