@@ -11,13 +11,15 @@ import nl.fontys.s3.carenestproject.service.exception.EmailExistsException;
 import nl.fontys.s3.carenestproject.service.mapping.BaseUserConverter;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public CreateBaseAccountResponse createUser(CreateBaseAccountRequest request) {
@@ -31,6 +33,8 @@ public class UserServiceImpl implements UserService {
             }
         }
 
+        String hashedPass = bCryptPasswordEncoder.encode(request.getPassword());
+
         UserEntity newUser = UserEntity.builder()
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
@@ -40,7 +44,7 @@ public class UserServiceImpl implements UserService {
                         .id(Gender.valueOf(request.getGender()).getValue())
                         .genderName(request.getGender())
                         .build())
-                .password(request.getPassword())
+                .password(hashedPass)
                 .build();
 
         UserEntity userEntity = userRepo.save(newUser);
