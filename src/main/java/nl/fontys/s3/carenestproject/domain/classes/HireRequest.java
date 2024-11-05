@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import nl.fontys.s3.carenestproject.domain.classes.users.CareTaker;
+import nl.fontys.s3.carenestproject.domain.classes.users.Caretaker;
 import nl.fontys.s3.carenestproject.domain.classes.users.Patient;
 
 @Builder
@@ -14,6 +14,6 @@ import nl.fontys.s3.carenestproject.domain.classes.users.Patient;
 public class HireRequest {
     private long id;
     private Patient patient;
-    private CareTaker careTaker;
+    private Caretaker careTaker;
     private Status status;
 }

@@ -1,16 +1,15 @@
 package nl.fontys.s3.carenestproject.controller;
 
 import lombok.AllArgsConstructor;
+import nl.fontys.s3.carenestproject.domain.classes.users.Caretaker;
 import nl.fontys.s3.carenestproject.service.CaretakerService;
 import nl.fontys.s3.carenestproject.service.request.CreateCaretakerAccountRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.InvalidParameterException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/caretaker")
@@ -32,6 +31,16 @@ public class CaretakerController {
         }
         catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred while creating the caretaker account.");
+        }
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<Caretaker>> getCaretakers() {
+        try{
+            return ResponseEntity.ok(caretakerService.getCaretakers());
+        }
+        catch(Exception e){
+            return ResponseEntity.internalServerError().build();
         }
     }
 }
