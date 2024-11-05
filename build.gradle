@@ -44,10 +44,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     implementation 'org.flywaydb:flyway-core:10.20.1'
-
     implementation 'org.flywaydb:flyway-core:9.10.0'
     implementation 'org.flywaydb:flyway-mysql:9.10.0'
     implementation 'mysql:mysql-connector-java:8.0.30'
+
+    implementation 'org.springframework.security:spring-security-core:6.3.4'
 
     runtimeOnly 'com.h2database:h2'
 
