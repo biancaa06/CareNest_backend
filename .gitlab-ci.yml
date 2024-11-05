@@ -22,14 +22,13 @@ sonarqube:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
     GIT_DEPTH: "0"
     SONAR_HOST_URL: "http://localhost:9000"
-    SONAR_TOKEN: "sqb_d6d4a865fe9b909e609362cffa817c6c33b662c0"
   cache:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
   script:
     - ./gradlew clean test jacocoTestReport
-    - ./gradlew sonar "-Dsonar.host.url=$SONAR_HOST_URL" "-Dsonar.login=$SONAR_TOKEN" "-Dsonar.qualitygate.wait=true"
+    - ./gradlew sonarqube -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.qualitygate.wait=true
   allow_failure: false
 
 
