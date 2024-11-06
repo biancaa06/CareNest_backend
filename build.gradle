@@ -30,8 +30,9 @@ sonar {
         property("sonar.projectKey", "carenest")
         property("sonar.projectName", "carenest")
         property("sonar.host.url", "http://localhost:9000")
-        property("sonar.token", "sqp_2b09d7d973c6a8cae137449cad6efc29bbc52ad9")
+        property("sonar.token", "sqp_ab081c3f006c878cc86b67183266b9db765a4133")
         }
+
 }
 
 dependencies {
