@@ -3,14 +3,19 @@ package nl.fontys.s3.carenestproject.service.impl;
 import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.domain.classes.Availability;
 import nl.fontys.s3.carenestproject.domain.classes.Role;
+import nl.fontys.s3.carenestproject.domain.classes.users.Caretaker;
 import nl.fontys.s3.carenestproject.persistance.entity.*;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.*;
 import nl.fontys.s3.carenestproject.service.CaretakerService;
+import nl.fontys.s3.carenestproject.service.mapping.AvailabilityConverter;
+import nl.fontys.s3.carenestproject.service.mapping.CaretakerConverter;
 import nl.fontys.s3.carenestproject.service.request.CreateCaretakerAccountRequest;
 import nl.fontys.s3.carenestproject.service.request.SicknessInputListRequest;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -39,10 +44,7 @@ public class CaretakerServiceImpl implements CaretakerService {
         Availability availability = Availability.fromNumericValue(request.getAvailabilityId());
         CaretakerEntity caretakerEntity = CaretakerEntity.builder()
                 .baseUser(baseUser)
-                .availability(AvailabilityEntity.builder()
-                        .id(availability.getValue())
-                        .availabilityName(availability.name())
-                        .build())
+                .availability(AvailabilityConverter.convertFromBaseToEntity(availability))
                 .personalDescription(request.getPersonalDescription())
                 .salaryPerHour(request.getSalaryPerHour())
                 .build();
@@ -64,6 +66,16 @@ public class CaretakerServiceImpl implements CaretakerService {
                     .build();
             sicknessOfCaretakerRepo.save(sicknessesForCaretaker);
         }
+    }
+
+    @Override
+    public List<Caretaker> getCaretakers() {
+        List<CaretakerEntity> caretakerEntities = caretakerRepo.findAll();
+        List<Caretaker> caretakers = new ArrayList<>();
+        for(CaretakerEntity caretakerEntity : caretakerEntities) {
+            caretakers.add(CaretakerConverter.convertFromEntityToBase(caretakerEntity, sicknessOfCaretakerRepo.findSicknessesForCaretakersByCaretaker(caretakerEntity)));
+        }
+        return caretakers;
     }
 
     private boolean isBaseUserACaretaker(UserEntity userEntity) {

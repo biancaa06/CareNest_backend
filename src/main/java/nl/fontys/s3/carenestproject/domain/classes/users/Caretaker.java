@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class CareTaker{
+public class Caretaker {
     private User baseUser;
     private String personalDescription;
     private double salaryPerHour;
