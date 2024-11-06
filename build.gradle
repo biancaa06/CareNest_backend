@@ -29,7 +29,7 @@ sonar {
     properties {
         property("sonar.projectKey", "carenest")
         property("sonar.projectName", "carenest")
-        property("sonar.host.url", "http://sonarqube:9000")
+        property("sonar.host.url", "http://localhost:9000")
         property("sonar.token", "sqb_d6d4a865fe9b909e609362cffa817c6c33b662c0")
         }
 }
