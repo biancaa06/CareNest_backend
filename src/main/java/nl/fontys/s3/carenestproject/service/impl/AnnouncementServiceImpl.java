@@ -3,6 +3,7 @@ package nl.fontys.s3.carenestproject.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.domain.classes.Announcement;
+import nl.fontys.s3.carenestproject.domain.classes.users.Manager;
 import nl.fontys.s3.carenestproject.persistance.entity.ManagerEntity;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.AnnouncementRepo;
 import nl.fontys.s3.carenestproject.service.request.CreateAnnouncementRequest;
@@ -71,7 +72,16 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     @Transactional
     public CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest request) {
-        ManagerEntity author = ManagerConverter.convertFromBaseToEntity(managerService.getManagerById(request.getAuthorId()));
+        if (request.getAuthorId() <= 0) {
+            throw new IllegalArgumentException("Author ID must be a positive number.");
+        }
+
+        Manager manager = managerService.getManagerById(request.getAuthorId());
+        if (manager == null) {
+            throw new IllegalArgumentException("Author with given ID does not exist.");
+        }
+
+        ManagerEntity author = ManagerConverter.convertFromBaseToEntity(manager);
         AnnouncementEntity announcementEntity = AnnouncementEntity.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
