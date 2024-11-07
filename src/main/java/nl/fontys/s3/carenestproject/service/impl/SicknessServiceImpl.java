@@ -41,15 +41,23 @@
 
         @Override
         public CreateSicknessResponse createSickness(CreateSicknessRequest request) {
-
             if (request.getName() == null) {
                 throw new IllegalArgumentException("Sickness name cannot be null");
             }
 
             SicknessEntity sicknessEntity = SicknessEntity.builder().name(request.getName()).build();
             sicknessEntity = sicknessRepo.save(sicknessEntity);
-            return CreateSicknessResponse.builder().id(sicknessEntity.getId()).name(sicknessEntity.getName()).build();
+
+            if (sicknessEntity == null) {
+                throw new IllegalStateException("Failed to save sickness entity.");
+            }
+
+            return CreateSicknessResponse.builder()
+                    .id(sicknessEntity.getId())
+                    .name(sicknessEntity.getName())
+                    .build();
         }
+
 
         @Override
         @Transactional
@@ -83,7 +91,7 @@
         private boolean checkExistingSickness(String name){
             List<Sickness> sicknesses = getAllSicknesses();
             for(Sickness s: sicknesses){
-                if(s.getName().equals(name)){
+                if(s!= null && s.getName().equals(name)){
                     return true;
                 }
             }

@@ -1,5 +1,6 @@
 package nl.fontys.s3.carenestproject.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Builder;
 import nl.fontys.s3.carenestproject.domain.classes.Address;
 import nl.fontys.s3.carenestproject.persistance.entity.AddressEntity;
@@ -18,6 +19,10 @@ public class AddressServiceImpl implements AddressService {
     public Address getAddressById(long id) {
         AddressEntity addressEntity = addressRepo.findAddressEntityById(id);
 
+        if (addressEntity == null) {
+            throw new EntityNotFoundException("Address with ID " + id + " not found.");
+        }
+
         return AddressConverter.convertFromEntityToBase(addressEntity);
     }
 
@@ -27,6 +32,10 @@ public class AddressServiceImpl implements AddressService {
         AddressEntity addressEntity = AddressConverter.convertFromBaseToEntity(address);
 
         addressEntity = addressRepo.save(addressEntity);
+
+        if (addressEntity == null) {
+            throw new IllegalStateException("Failed to save address.");
+        }
 
         address.setId(addressEntity.getId());
         return address;
