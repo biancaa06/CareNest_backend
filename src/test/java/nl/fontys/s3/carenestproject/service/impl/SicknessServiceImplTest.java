@@ -108,6 +108,23 @@ class SicknessServiceImplTest {
 
         verify(sicknessMockRepo, never()).save(any(SicknessEntity.class));
     }
+    @Test
+    void createSickness_ShouldThrowException_WhenSaveFails() {
+        // Arrange: Create request with valid data
+        CreateSicknessRequest request = CreateSicknessRequest.builder()
+                .name("New Sickness")
+                .build();
+
+        // Mock save to return null, simulating a save failure
+        when(sicknessMockRepo.save(any(SicknessEntity.class))).thenReturn(null);
+
+        // Act and Assert: Expect IllegalStateException due to save failure
+        assertThrows(IllegalStateException.class, () -> sicknessService.createSickness(request),
+                "Expected IllegalStateException when save operation fails");
+
+        // Verify save was attempted
+        verify(sicknessMockRepo, times(1)).save(any(SicknessEntity.class));
+    }
 
 
     @Test
@@ -129,9 +146,6 @@ class SicknessServiceImplTest {
 
     @Test
     void deleteSickness_ShouldThrowException_WhenSicknessIdIsInvalid() {
-
-        Sickness invalidSickness = Sickness.builder().id(0).name("Invalid Sickness").build();
-
         assertThrows(IllegalArgumentException.class, () -> sicknessService.deleteSicknessById(0L));
 
         verify(sicknessMockRepo, never()).deleteSicknessEntityById(anyLong());
@@ -183,11 +197,11 @@ class SicknessServiceImplTest {
                 .newSicknessName(null)
                 .build();
 
-        assertThrows(IllegalArgumentException.class, () -> sicknessService.updateSickness(0L, request));
+        assertThrows(IllegalArgumentException.class, () -> sicknessService.updateSickness(1L, request),
+                "Expected IllegalArgumentException for null sickness name");
 
         verify(sicknessMockRepo, never()).save(any(SicknessEntity.class));
     }
-
     @Test
     void updateSickness_ShouldThrowException_WhenSicknessAlreadyExists() {
         UpdateSicknessRequest request = UpdateSicknessRequest.builder()
@@ -202,4 +216,20 @@ class SicknessServiceImplTest {
 
         verify(sicknessMockRepo, never()).save(any(SicknessEntity.class));
     }
+
+    @Test
+    void updateSickness_ShouldThrowException_WhenIdIsZeroOrNegative() {
+        UpdateSicknessRequest request = UpdateSicknessRequest.builder()
+                .newSicknessName("Valid Name")
+                .build();
+
+        assertThrows(IllegalArgumentException.class, () -> sicknessService.updateSickness(0L, request),
+                "Expected IllegalArgumentException for invalid ID (0)");
+        assertThrows(IllegalArgumentException.class, () -> sicknessService.updateSickness(-1L, request),
+                "Expected IllegalArgumentException for invalid ID (-1)");
+
+        verify(sicknessMockRepo, never()).save(any(SicknessEntity.class));
+    }
+
+
 }

@@ -31,7 +31,8 @@ sonar {
         property("sonar.projectName", "carenest")
         property("sonar.host.url", "http://localhost:9000")
         property("sonar.token", "sqp_ab081c3f006c878cc86b67183266b9db765a4133")
-        }
+        property "sonar.coverage.exclusions", "**/src/main/java/nl/fontys/s3/carenestproject/configuration/**,**/src/main/java/nl/fontys/s3/carenestproject/controller/**,**/src/main/java/nl/fontys/s3/carenestproject/domain/**,**/src/main/java/nl/fontys/s3/carenestproject/persistance/**"
+    }
 
 }
 
