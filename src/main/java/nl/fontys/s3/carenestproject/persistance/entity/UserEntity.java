@@ -54,6 +54,10 @@ public class UserEntity {
     @NotNull
     private GenderEntity gender;
 
+    @Lob
+    @Column(name = "profile_image", columnDefinition = "BLOB")
+    private byte[] profileImage;
+
     @Column(name="active")
     private boolean active;
 }

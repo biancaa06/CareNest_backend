@@ -16,8 +16,13 @@ import nl.fontys.s3.carenestproject.service.mapping.BaseUserConverter;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
 import nl.fontys.s3.carenestproject.service.request.UpdateUserAddressRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Base64;
 
 @Service
 @AllArgsConstructor
@@ -60,17 +65,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long id){
-        if(id<1){
+    public User getUserById(long id) {
+        if (id < 1) {
             throw new IllegalArgumentException("Invalid id");
         }
 
         UserEntity userEntity = userRepo.findUserEntityById(id);
-
-        if(userEntity==null || !userEntity.isActive()){
+        if (userEntity == null || !userEntity.isActive()) {
             throw new UserNotActiveException();
         }
-        return BaseUserConverter.convertFromEntityToBase(userEntity);
+
+        User user = BaseUserConverter.convertFromEntityToBase(userEntity);
+
+        if (userEntity.getProfileImage() != null) {
+            String base64Image = Base64.getEncoder().encodeToString(userEntity.getProfileImage());
+            user.setProfileImage(base64Image.getBytes());
+        }
+
+        return user;
     }
 
     @Override
@@ -85,6 +97,29 @@ public class UserServiceImpl implements UserService {
                 .street(request.getStreet())
                 .number(request.getNumber()).build());
         userEntity.setAddress(AddressConverter.convertFromBaseToEntity(address));
+        userRepo.save(userEntity);
+    }
+
+    @Override
+    public void updateProfilePicture(MultipartFile file, long userId) throws IOException {
+        UserEntity userEntity = userRepo.findUserEntityById(userId);
+        if(userEntity==null || !userEntity.isActive()){
+            throw new UserNotActiveException();
+        }
+        //if file not null upload new picture else jeep default avatar
+        if(file != null){
+            String fileType = file.getContentType();
+            if (!MediaType.IMAGE_JPEG_VALUE.equals(fileType) && !MediaType.IMAGE_PNG_VALUE.equals(fileType)) {
+                throw new IllegalArgumentException("Only PNG and JPG files are allowed.");
+            }
+            else{
+                userEntity.setProfileImage(file.getBytes());
+            }
+        }
+        else{
+            userEntity.setProfileImage(null);
+        }
+
         userRepo.save(userEntity);
     }
 
