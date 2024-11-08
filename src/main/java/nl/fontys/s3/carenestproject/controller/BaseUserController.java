@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.domain.classes.users.User;
 import nl.fontys.s3.carenestproject.service.UserService;
 import nl.fontys.s3.carenestproject.service.exception.EmailExistsException;
+import nl.fontys.s3.carenestproject.service.exception.UserNotActiveException;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
+import nl.fontys.s3.carenestproject.service.request.UpdateUserAddressRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +45,23 @@ public class BaseUserController {
         }
         catch(EmailExistsException e){
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/updateAddress/{userId}")
+    public ResponseEntity<Void> updateBaseUsersAddress(@RequestBody @Validated UpdateUserAddressRequest request, @PathVariable long userId) {
+        try{
+            userService.updateUserAddress(request, userId);
+            return ResponseEntity.ok().build();
+        }
+        catch(UserNotActiveException e){
+            return ResponseEntity.notFound().build();
+        }
+        catch(IllegalArgumentException e){
+            return ResponseEntity.badRequest().build();
+        }
+        catch(Exception  e){
+            return ResponseEntity.internalServerError().build();
         }
     }
 }
