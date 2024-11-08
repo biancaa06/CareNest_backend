@@ -8,6 +8,7 @@ import nl.fontys.s3.carenestproject.persistance.entity.UserEntity;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.UserRepo;
 import nl.fontys.s3.carenestproject.service.UserService;
 import nl.fontys.s3.carenestproject.service.exception.EmailExistsException;
+import nl.fontys.s3.carenestproject.service.exception.UserNotActiveException;
 import nl.fontys.s3.carenestproject.service.mapping.BaseUserConverter;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
@@ -55,9 +56,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(long id){
+        if(id<1){
+            throw new IllegalArgumentException("Invalid id");
+        }
+
         UserEntity userEntity = userRepo.findUserEntityById(id);
-        if(userEntity == null){
-            throw new IllegalArgumentException("User not found");
+
+        if(userEntity==null || !userEntity.isActive()){
+            throw new UserNotActiveException();
         }
         return BaseUserConverter.convertFromEntityToBase(userEntity);
     }
