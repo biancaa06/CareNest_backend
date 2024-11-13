@@ -22,7 +22,7 @@ public class ManagerController {
     public ResponseEntity<String> createManagerAccount(@RequestBody @Validated CreateManagerAccountRequest request) {
         try {
             managerService.createManagerAccount(request);
-            return ResponseEntity.ok("Caretaker account created successfully.");
+            return ResponseEntity.ok("Manager account created successfully.");
         }
         catch (InvalidParameterException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
