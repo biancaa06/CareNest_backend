@@ -1,8 +1,10 @@
 package nl.fontys.s3.carenestproject.service;
 
 import nl.fontys.s3.carenestproject.domain.classes.users.User;
+import nl.fontys.s3.carenestproject.service.request.AuthRequest;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
 import nl.fontys.s3.carenestproject.service.request.UpdateUserAddressRequest;
+import nl.fontys.s3.carenestproject.service.response.AuthResponse;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,5 +15,6 @@ public interface UserService {
     User getUserById(long id);
     void updateUserAddress(UpdateUserAddressRequest request, long userId);
     void updateProfilePicture(MultipartFile file, long userId) throws IOException;
+    AuthResponse login(AuthRequest request);
 }
 
