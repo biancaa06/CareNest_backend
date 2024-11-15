@@ -336,7 +336,7 @@ class AnnouncementServiceImplTest {
                 .description("Updated Description")
                 .build();
 
-        announcementService.updateAnnouncement(id, updateRequest);
+        announcementService.updateAnnouncement(id, updateRequest, 1L);
 
         verify(announcementRepo, times(1)).updateAnnouncementEntity(id, updateRequest.getTitle(), updateRequest.getDescription());
     }

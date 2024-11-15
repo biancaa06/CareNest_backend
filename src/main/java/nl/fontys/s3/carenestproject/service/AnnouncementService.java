@@ -12,6 +12,6 @@ public interface AnnouncementService {
     Announcement getAnnouncementByTitle(String title);
     List<Announcement> getAllAnnouncements();
     CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest request);
-    void updateAnnouncement(long id, UpdateAnnouncementRequest announcement);
+    void updateAnnouncement(long id, UpdateAnnouncementRequest announcement,long authenticatedUserId);
     void deleteAnnouncementById(long id);
 }
