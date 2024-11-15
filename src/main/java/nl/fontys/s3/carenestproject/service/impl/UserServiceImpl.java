@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
         Long studentId = (user.getId() != null) ? user.getId() : null;
 
         List<String> roles = new ArrayList<>();
-        roles.add(user.getRoleId().toString());
+        roles.add(user.getRoleId().getRoleName());
 
         return accessTokenEncoder.encode(
                 new AccessTokenImpl(user.getEmail(), studentId, roles));
