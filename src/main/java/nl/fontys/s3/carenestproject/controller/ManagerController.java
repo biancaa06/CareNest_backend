@@ -1,5 +1,6 @@
 package nl.fontys.s3.carenestproject.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.domain.classes.users.Manager;
 import nl.fontys.s3.carenestproject.service.ManagerService;
@@ -19,6 +20,7 @@ public class ManagerController {
     private final ManagerService managerService;
 
     @PostMapping()
+    @RolesAllowed("MANAGER")
     public ResponseEntity<String> createManagerAccount(@RequestBody @Validated CreateManagerAccountRequest request) {
         try {
             managerService.createManagerAccount(request);
@@ -33,6 +35,7 @@ public class ManagerController {
     }
 
     @GetMapping("/{id}")
+    @RolesAllowed({"MANAGER","CARETAKER", "PATIENT"})
     public ResponseEntity<Manager> getManagerById(@PathVariable long id) {
         Manager manager = managerService.getManagerById(id);
         if (manager != null) {
@@ -42,6 +45,7 @@ public class ManagerController {
     }
 
     @GetMapping("/position/{positionId}")
+    @RolesAllowed("MANAGER")
     public ResponseEntity<List<Manager>> getManagersByPosition(@PathVariable long positionId) {
         return ResponseEntity.ok(managerService.getManagersByPosition(positionId));
     }
