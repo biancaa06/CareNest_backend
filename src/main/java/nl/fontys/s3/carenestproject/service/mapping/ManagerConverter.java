@@ -9,12 +9,15 @@ public final class ManagerConverter {
     private ManagerConverter() {}
 
     public static Manager convertFromEntityToBase(ManagerEntity managerEntity) {
+        if (managerEntity == null) {
+            return null;
+        }
         return Manager.builder()
                 .baseUser(BaseUserConverter.convertFromEntityToBase(managerEntity.getBaseUser()))
-                .position(Position.valueOf(managerEntity.getPosition().getPositionName()))
+                .position(Position.fromNumericValue(managerEntity.getPosition().getId()))
                 .build();
-
     }
+
 
     public static ManagerEntity convertFromBaseToEntity(Manager manager) {
         return ManagerEntity.builder()

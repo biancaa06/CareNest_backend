@@ -5,6 +5,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class UnauthorizedException extends ResponseStatusException {
     public UnauthorizedException(String message) {
-        super(HttpStatus.UNAUTHORIZED, message);
+        super(HttpStatus.valueOf(403), message);
     }
 }

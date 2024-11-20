@@ -13,6 +13,7 @@ import nl.fontys.s3.carenestproject.service.AddressService;
 import nl.fontys.s3.carenestproject.service.UserService;
 import nl.fontys.s3.carenestproject.service.exception.EmailExistsException;
 import nl.fontys.s3.carenestproject.service.exception.InvalidCredentialsException;
+import nl.fontys.s3.carenestproject.service.exception.UnauthorizedException;
 import nl.fontys.s3.carenestproject.service.exception.UserNotActiveException;
 import nl.fontys.s3.carenestproject.service.mapping.AddressConverter;
 import nl.fontys.s3.carenestproject.service.mapping.BaseUserConverter;
@@ -73,7 +74,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long id) {
+    public User getUserById(long id, long authenticatedUserId) {
+
+        if(id != authenticatedUserId) {
+            throw new UnauthorizedException("You are not authorized for this action");
+        }
+
         if (id < 1) {
             throw new IllegalArgumentException("Invalid id");
         }
@@ -94,7 +100,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserAddress(UpdateUserAddressRequest request, long userId) {
+    public void updateUserAddress(UpdateUserAddressRequest request, long userId, long authenticatedUserId) {
+        if(userId != authenticatedUserId) {
+            throw new UnauthorizedException("You cannot update the address of another user. Please log in with your own account");
+        }
+
         UserEntity userEntity = userRepo.findUserEntityById(userId);
         if(userEntity==null || !userEntity.isActive()){
             throw new UserNotActiveException();
@@ -109,7 +119,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfilePicture(MultipartFile file, long userId) throws IOException {
+    public void updateProfilePicture(MultipartFile file, long userId, long authenticatedUserId) throws IOException {
+
+        if(userId != authenticatedUserId) {
+            throw new UnauthorizedException("You cannot update the address of another user. Please log in with your own account");
+        }
+
         UserEntity userEntity = userRepo.findUserEntityById(userId);
         if(userEntity==null || !userEntity.isActive()){
             throw new UserNotActiveException();

@@ -33,34 +33,34 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public Announcement getAnnouncementById(long id) {
         AnnouncementEntity announcementEntity = announcementRepo.findAnnouncementEntityById(id);
 
-        if(announcementEntity != null) {
-            return Announcement.builder()
-                    .id(announcementEntity.getId())
-                    .title(announcementEntity.getTitle())
-                    .description(announcementEntity.getDescription())
-                    .author(ManagerConverter.convertFromEntityToBase(announcementEntity.getAuthor()))
-                    .date(announcementEntity.getDate())
-                    .build();
+        if (announcementEntity == null) {
+            throw new ObjectNotFoundException("Announcement with ID " + id + " not found");
         }
 
-        return null;
+        return Announcement.builder()
+                .id(announcementEntity.getId())
+                .title(announcementEntity.getTitle())
+                .description(announcementEntity.getDescription())
+                .author(ManagerConverter.convertFromEntityToBase(announcementEntity.getAuthor()))
+                .date(announcementEntity.getDate())
+                .build();
     }
 
     @Override
     public Announcement getAnnouncementByTitle(String title) {
         AnnouncementEntity announcementEntity = announcementRepo.findAnnouncementEntityByTitle(title);
 
-        if(announcementEntity != null) {
-            return Announcement.builder()
-                    .id(announcementEntity.getId())
-                    .title(announcementEntity.getTitle())
-                    .description(announcementEntity.getDescription())
-                    .author(ManagerConverter.convertFromEntityToBase(announcementEntity.getAuthor()))
-                    .date(announcementEntity.getDate())
-                    .build();
+        if (announcementEntity == null) {
+            throw new ObjectNotFoundException("Announcement with title '" + title + "' not found");
         }
 
-        return null;
+        return Announcement.builder()
+                .id(announcementEntity.getId())
+                .title(announcementEntity.getTitle())
+                .description(announcementEntity.getDescription())
+                .author(ManagerConverter.convertFromEntityToBase(announcementEntity.getAuthor()))
+                .date(announcementEntity.getDate())
+                .build();
     }
 
     @Override

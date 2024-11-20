@@ -12,9 +12,9 @@ import java.io.IOException;
 
 public interface UserService {
     CreateBaseAccountResponse createUser(CreateBaseAccountRequest request);
-    User getUserById(long id);
-    void updateUserAddress(UpdateUserAddressRequest request, long userId);
-    void updateProfilePicture(MultipartFile file, long userId) throws IOException;
+    User getUserById(long id, long authenticatedUserId);
+    void updateUserAddress(UpdateUserAddressRequest request, long userId, long authenticatedUserId);
+    void updateProfilePicture(MultipartFile file, long userId, long authenticatedUserId) throws IOException;
     AuthResponse login(AuthRequest request);
 }
 

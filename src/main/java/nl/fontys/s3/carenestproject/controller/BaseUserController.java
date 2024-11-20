@@ -1,10 +1,12 @@
 package nl.fontys.s3.carenestproject.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import lombok.AllArgsConstructor;
+import nl.fontys.s3.carenestproject.configuration.security.auth.RequestAuthenticatedUserProvider;
+import nl.fontys.s3.carenestproject.configuration.security.token.AccessToken;
 import nl.fontys.s3.carenestproject.domain.classes.users.User;
 import nl.fontys.s3.carenestproject.service.UserService;
 import nl.fontys.s3.carenestproject.service.exception.EmailExistsException;
-import nl.fontys.s3.carenestproject.service.exception.UserNotActiveException;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
 import nl.fontys.s3.carenestproject.service.request.UpdateUserAddressRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
@@ -21,6 +23,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class BaseUserController {
     private final UserService userService;
+    private final RequestAuthenticatedUserProvider requestAuthenticatedUserProvider;
 
     @PostMapping()
     public ResponseEntity<?> createBaseAccount(@RequestBody @Validated CreateBaseAccountRequest request) {
@@ -38,45 +41,42 @@ public class BaseUserController {
     }
 
     @GetMapping("/{id}")
+    @RolesAllowed({"MANAGER", "CARETAKER", "PATIENT"})
     public ResponseEntity<User> getBaseUserAccount(@PathVariable long id) {
-        try{
-            User user = userService.getUserById(id);
-            return ResponseEntity.ok().body(user);
+        AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
+
+        if (accessToken == null || accessToken.getUserId() == null){
+            return ResponseEntity.status(401).build();
         }
-        catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().build();
-        }
-        catch(EmailExistsException e){
-            return ResponseEntity.notFound().build();
-        }
+        User user = userService.getUserById(id, accessToken.getUserId());
+        return ResponseEntity.ok().body(user);
     }
 
     @PutMapping("/updateAddress/{userId}")
+    @RolesAllowed({"MANAGER", "CARETAKER", "PATIENT"})
     public ResponseEntity<Void> updateBaseUsersAddress(@RequestBody @Validated UpdateUserAddressRequest request, @PathVariable long userId) {
-        try{
-            userService.updateUserAddress(request, userId);
-            return ResponseEntity.ok().build();
+        AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
+
+        if (accessToken == null || accessToken.getUserId() == null){
+            return ResponseEntity.status(401).build();
         }
-        catch(UserNotActiveException e){
-            return ResponseEntity.notFound().build();
-        }
-        catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().build();
-        }
-        catch(Exception  e){
-            return ResponseEntity.internalServerError().build();
-        }
+
+        userService.updateUserAddress(request, userId, accessToken.getUserId());
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{userId}/image-upload")
+    @RolesAllowed({"MANAGER", "CARETAKER", "PATIENT"})
     public ResponseEntity<Void> uploadImage(@PathVariable long userId, @RequestParam("file") MultipartFile file) {
         try {
-            userService.updateProfilePicture(file, userId);
+            AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
+
+            if (accessToken == null || accessToken.getUserId() == null){
+                return ResponseEntity.status(401).build();
+            }
+
+            userService.updateProfilePicture(file, userId, accessToken.getUserId());
             return ResponseEntity.ok().build();
-        } catch (UserNotActiveException e) {
-            return ResponseEntity.notFound().build();
-        } catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().build();
         }
         catch (IOException e) {
             return ResponseEntity.internalServerError().build();
