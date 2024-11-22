@@ -1,8 +1,9 @@
-package nl.fontys.s3.carenestproject.configuration;
+package nl.fontys.s3.carenestproject.configuration.exceptionhandler;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -20,9 +21,15 @@ import java.util.List;
 
 @ControllerAdvice
 @Slf4j
-
 public class RestCustomExceptionHandler extends ResponseEntityExceptionHandler {
+
     private static final URI VALIDATION_ERROR_TYPE = URI.create("/validation-error");
+
+    @ExceptionHandler(value = {AccessDeniedException.class})
+    public ResponseEntity<Object> handleConstraintViolationException(final AccessDeniedException error) {
+        log.error("Access Denied with status {} occurred.", HttpStatus.FORBIDDEN, error);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(

@@ -12,6 +12,7 @@ import nl.fontys.s3.carenestproject.persistance.entity.UserEntity;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.PositionRepo;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.UserRepo;
 import nl.fontys.s3.carenestproject.service.ManagerService;
+import nl.fontys.s3.carenestproject.service.exception.UserNotActiveException;
 import nl.fontys.s3.carenestproject.service.mapping.ManagerConverter;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.ManagerRepo;
 import nl.fontys.s3.carenestproject.service.mapping.PositionConverter;
@@ -33,8 +34,13 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Manager getManagerById(long id) {
-        return ManagerConverter.convertFromEntityToBase(managerRepo.findManagerEntityById(id));
+        ManagerEntity managerEntity = managerRepo.findManagerEntityById(id);
+        if (managerEntity == null) {
+            throw new UserNotActiveException("Manager not found");
+        }
+        return ManagerConverter.convertFromEntityToBase(managerEntity);
     }
+
 
     @Override
     public void createManagerAccount(CreateManagerAccountRequest request) {
