@@ -191,10 +191,18 @@ class AnnouncementServiceImplTest {
         AnnouncementEntity entity = mockAnnouncementEntityWithUser(userId);
         when(announcementRepo.findAnnouncementEntityById(id)).thenReturn(entity);
 
+        Date expectedDate = new Date();
+
         announcementService.updateAnnouncement(id, request, userId);
 
-        verify(announcementRepo, times(1)).updateAnnouncementEntity(id, request.getTitle(), request.getDescription(), new Date());
+        verify(announcementRepo, times(1)).updateAnnouncementEntity(
+                eq(id),
+                eq(request.getTitle()),
+                eq(request.getDescription()),
+                argThat(date -> Math.abs(date.getTime() - expectedDate.getTime()) < 1000) // Allow for slight time differences
+        );
     }
+
 
     @Test
     void updateAnnouncement_ShouldThrowException_WhenAnnouncementNotFound() {
