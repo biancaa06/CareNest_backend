@@ -8,6 +8,7 @@ import nl.fontys.s3.carenestproject.domain.classes.users.Manager;
 import nl.fontys.s3.carenestproject.domain.classes.users.User;
 import nl.fontys.s3.carenestproject.persistance.entity.*;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.AnnouncementRepo;
+import nl.fontys.s3.carenestproject.persistance.repoInterfaces.ManagerRepo;
 import nl.fontys.s3.carenestproject.service.ManagerService;
 import nl.fontys.s3.carenestproject.service.exception.ObjectNotFoundException;
 import nl.fontys.s3.carenestproject.service.exception.UnauthorizedException;
@@ -32,6 +33,8 @@ class AnnouncementServiceImplTest {
 
     @Mock
     private AnnouncementRepo announcementRepo;
+    @Mock
+    private ManagerRepo managerRepo;
 
     @Mock
     private ManagerService managerService;
@@ -41,7 +44,7 @@ class AnnouncementServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        announcementService = new AnnouncementServiceImpl(announcementRepo, managerService);
+        announcementService = new AnnouncementServiceImpl(announcementRepo, managerService, managerRepo);
     }
 
     // Test: getAnnouncementById
@@ -190,7 +193,7 @@ class AnnouncementServiceImplTest {
 
         announcementService.updateAnnouncement(id, request, userId);
 
-        verify(announcementRepo, times(1)).updateAnnouncementEntity(id, request.getTitle(), request.getDescription());
+        verify(announcementRepo, times(1)).updateAnnouncementEntity(id, request.getTitle(), request.getDescription(), new Date());
     }
 
     @Test
@@ -209,7 +212,7 @@ class AnnouncementServiceImplTest {
         assertThrows(ObjectNotFoundException.class, () -> announcementService.updateAnnouncement(id, request, userId));
 
         // Ensure no updates are attempted
-        verify(announcementRepo, never()).updateAnnouncementEntity(anyLong(), any(), any());
+        verify(announcementRepo, never()).updateAnnouncementEntity(anyLong(), any(), any(), any());
     }
 
     @Test
@@ -225,7 +228,7 @@ class AnnouncementServiceImplTest {
         when(announcementRepo.findAnnouncementEntityById(id)).thenReturn(entity);
 
         assertThrows(UnauthorizedException.class, () -> announcementService.updateAnnouncement(id, request, userId));
-        verify(announcementRepo, never()).updateAnnouncementEntity(anyLong(), any(), any());
+        verify(announcementRepo, never()).updateAnnouncementEntity(anyLong(), any(), any(), any());
     }
 
     // Test: deleteAnnouncementById
