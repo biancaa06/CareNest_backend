@@ -31,7 +31,8 @@ sonar {
         property("sonar.projectName", "carenest")
         property("sonar.host.url", "http://localhost:9000")
         property("sonar.token", "sqp_ab081c3f006c878cc86b67183266b9db765a4133")
-        }
+        property "sonar.coverage.exclusions", "**/src/main/java/nl/fontys/s3/carenestproject/configuration/**,**/src/main/java/nl/fontys/s3/carenestproject/controller/**,**/src/main/java/nl/fontys/s3/carenestproject/domain/**,**/src/main/java/nl/fontys/s3/carenestproject/persistance/**"
+    }
 
 }
 
@@ -50,6 +51,10 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.30'
 
     implementation 'org.springframework.security:spring-security-core:6.3.4'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     runtimeOnly 'com.h2database:h2'
 

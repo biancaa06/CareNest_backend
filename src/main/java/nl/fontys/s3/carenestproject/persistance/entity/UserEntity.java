@@ -19,7 +19,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "first_name")
     @NotBlank
@@ -53,6 +53,10 @@ public class UserEntity {
     @ManyToOne
     @NotNull
     private GenderEntity gender;
+
+    @Lob
+    @Column(name = "profile_image", columnDefinition = "BLOB")
+    private byte[] profileImage;
 
     @Column(name="active")
     private boolean active;

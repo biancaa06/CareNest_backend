@@ -22,4 +22,5 @@ public class User {
     private Address address;
     private Gender gender;
     private boolean active;
+    private byte[] profileImage;
 }

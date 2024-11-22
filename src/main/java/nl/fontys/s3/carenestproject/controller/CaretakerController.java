@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.InvalidParameterException;
 import java.util.List;
 
 @RestController
@@ -22,9 +21,6 @@ public class CaretakerController {
         try {
             caretakerService.createCaretakerAccount(request);
             return ResponseEntity.ok("Caretaker account created successfully.");
-        }
-        catch (InvalidParameterException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
         }
         catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
