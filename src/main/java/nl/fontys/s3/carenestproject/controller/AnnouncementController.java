@@ -72,11 +72,10 @@ public class AnnouncementController {
         return ResponseEntity.ok().body(response);
     }
 
-    @DeleteMapping("/id:{id}")
+    @DeleteMapping("/{id}")
     @RolesAllowed({"MANAGER"})
     public ResponseEntity<Void> deleteAnnouncement(@PathVariable(value="id") final long id){
         announcementService.deleteAnnouncementById(id);
-
         return ResponseEntity.noContent().build();
     }
 

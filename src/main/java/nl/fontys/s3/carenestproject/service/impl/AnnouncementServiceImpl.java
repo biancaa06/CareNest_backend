@@ -133,6 +133,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcementRepo.updateAnnouncementEntity(id, announcement.getTitle(), announcement.getDescription(), new Date());
     }
 
+    @Transactional
     @Override
     public void deleteAnnouncementById(long id) {
         announcementRepo.deleteAnnouncementById(id);
