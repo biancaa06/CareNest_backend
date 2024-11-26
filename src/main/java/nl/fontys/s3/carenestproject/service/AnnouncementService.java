@@ -10,6 +10,7 @@ import java.util.List;
 public interface AnnouncementService {
     Announcement getAnnouncementById(long id);
     Announcement getAnnouncementByTitle(String title);
+    List<Announcement> getAnnouncementsByAuthor(long authorId);
     List<Announcement> getAllAnnouncements();
     CreateAnnouncementResponse createAnnouncement(CreateAnnouncementRequest request);
     void updateAnnouncement(long id, UpdateAnnouncementRequest announcement,long authenticatedUserId);
