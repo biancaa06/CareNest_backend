@@ -15,8 +15,11 @@ public class SpringCorsConfiguration {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(allowedOrigins)
-                        .allowedMethods("GET", "POST", "PUT", "DELETE");
+                        .allowCredentials(true);
+                        //.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        //.allowedHeaders("Content-Type");
             }
         };
     }
 }
+
