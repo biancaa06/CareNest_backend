@@ -43,8 +43,10 @@ public class AuthenticationRequestFilter extends OncePerRequestFilter {
             setupSpringSecurityContext(accessToken);
             chain.doFilter(request, response);
         } catch (InvalidAccessTokenException e) {
-            logger.error("Error validating access token", e);
-            sendAuthenticationError(response);
+            chain.doFilter(request, response);
+            return;
+//            logger.error("Error validating access token", e);
+//            sendAuthenticationError(response);
         }
     }
 
