@@ -43,7 +43,7 @@ docker-deployment:
     - docker stop carenest-backend-staging || true
     - docker rm carenest-backend-staging || true
     - docker rmi carenest-backend || true
-    - docker build -t carenest-backend .
+    - docker build -t carenest-backend -f Dockerfile .
     - docker run -d -p 8090:8080 --net=docker_careNest_network_staging --env spring_profiles_active=staging --name=carenest-backend-staging carenest-backend
   only:
     - main
