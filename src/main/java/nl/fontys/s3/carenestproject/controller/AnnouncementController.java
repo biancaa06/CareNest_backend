@@ -49,6 +49,19 @@ public class AnnouncementController {
         return ResponseEntity.ok().body(announcement);
     }
 
+    @GetMapping("/author/{authorId}")
+    @RolesAllowed({"MANAGER"})
+    public ResponseEntity<List<Announcement>>getAnnouncementsByAuthor(@PathVariable(value = "authorId") final long authorId){
+        AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
+
+        if (accessToken == null || accessToken.getUserId() == null){
+            return ResponseEntity.status(401).build();
+        }
+
+        final List<Announcement> announcements = announcementService.getAnnouncementsByAuthor(authorId);
+        return ResponseEntity.ok().body(announcements);
+    }
+
     @PostMapping()
     @RolesAllowed({"MANAGER"})
     public ResponseEntity<CreateAnnouncementResponse> addAnnouncement(@RequestBody @Validated CreateAnnouncementRequest announcement){
@@ -59,11 +72,10 @@ public class AnnouncementController {
         return ResponseEntity.ok().body(response);
     }
 
-    @DeleteMapping("/id:{id}")
+    @DeleteMapping("/{id}")
     @RolesAllowed({"MANAGER"})
     public ResponseEntity<Void> deleteAnnouncement(@PathVariable(value="id") final long id){
         announcementService.deleteAnnouncementById(id);
-
         return ResponseEntity.noContent().build();
     }
 

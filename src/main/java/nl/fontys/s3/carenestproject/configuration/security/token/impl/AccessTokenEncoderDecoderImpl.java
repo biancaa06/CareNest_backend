@@ -45,17 +45,22 @@ public class AccessTokenEncoderDecoderImpl implements AccessTokenEncoder, Access
         return Jwts.builder()
                 .setSubject(accessToken.getSubject())
                 .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plus(30, ChronoUnit.MINUTES)))
+                .setExpiration(Date.from(now.plus(1, ChronoUnit.MINUTES)))
                 .addClaims(claimsMap)
                 .signWith(key)
                 .compact();
+
     }
 
     @Override
     public AccessToken decode(String accessTokenEncoded) {
         try {
-            Jwt<?, Claims> jwt = Jwts.parserBuilder().setSigningKey(key).build()
+            Jwt<?, Claims> jwt = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .setAllowedClockSkewSeconds(30) // Allow 30 seconds of clock skew
+                    .build()
                     .parseClaimsJws(accessTokenEncoded);
+
             Claims claims = jwt.getBody();
 
             List<String> roles = claims.get("roles", List.class);
