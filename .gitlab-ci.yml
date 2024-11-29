@@ -33,17 +33,11 @@ sonarqube:
 
 docker-deployment:
   stage: docker-deployment
-  image: docker:latest
-  services:
-    - docker:dind
-  variables:
-    DOCKER_DRIVER: overlay2
   script:
     - ./gradlew clean assemble
-    - docker stop carenest-backend-staging || true
-    - docker rm carenest-backend-staging || true
-    - docker rmi carenest-backend || true
-    - docker build -t carenest-backend -f Dockerfile .
-    - docker run -d -p 8090:8080 --net=docker_careNest_network_staging --env spring_profiles_active=staging --name=carenest-backend-staging carenest-backend
+    - docker stop carenest-backend-staging; if ($?) { docker rm carenest-backend-staging }
+    - docker rmi carenest-backend; if ($?) {}
+    - docker build -t carenest-backend .
+    - docker run -d -p 8090:8080 --net=flyway_careNest_network_staging --env spring_profiles_active=staging --name=carenest-backend-staging carenest-backend
   only:
     - main
