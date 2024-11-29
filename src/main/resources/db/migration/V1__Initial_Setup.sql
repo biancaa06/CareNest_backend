@@ -164,3 +164,4 @@ ALTER TABLE sicknesses_of_patient
     ADD CONSTRAINT FKxnh0v1im7611nio6x2jre9ml FOREIGN KEY (sickness_id) REFERENCES sickness (id) ON DELETE NO ACTION;
 
 CREATE INDEX FKxnh0v1im7611nio6x2jre9ml ON sicknesses_of_patient (sickness_id);
+
