@@ -5,6 +5,7 @@ stages:
   - build
   - test
   - sonarqube
+  - docker-deployment
 
 build:
   stage: build
@@ -30,4 +31,14 @@ sonarqube:
     - ./gradlew sonar "-Dsonar.host.url=http://localhost:9000" "-Dsonar.token=sqp_ab081c3f006c878cc86b67183266b9db765a4133" "-Dsonar.qualitygate.wait=true"
   allow_failure: false
 
-
+docker-deployment:
+  stage: docker-deployment
+  script:
+    - ./gradlew clean assemble
+    - docker stop carenest-backend-staging || true
+    - docker rm carenest-backend-staging ||
+    - docker rmi carenest-backend || true
+    - docker build -t carenest-backend .
+    - docker run -d -p 8090:8080 --net=docker_careNest_network_staging --env spring_profiles_active=staging --name=carenest-backend-staging carenest-backend
+  only:
+    - main
