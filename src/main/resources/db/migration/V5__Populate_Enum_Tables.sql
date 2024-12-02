@@ -5,8 +5,8 @@ ALTER TABLE role ADD CONSTRAINT UNIQUE (role_name);
 
 
 INSERT INTO availability (id, availability_name) VALUES
-                                                     (1, 'FULL-TIME'),
-                                                     (2, 'PART-TIME')
+                                                     (1, 'FULL_TIME'),
+                                                     (2, 'PART_TIME')
 ON DUPLICATE KEY UPDATE availability_name = VALUES(availability_name);
 
 INSERT INTO gender (id, gender_name) VALUES

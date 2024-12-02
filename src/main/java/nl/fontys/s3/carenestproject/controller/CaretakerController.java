@@ -32,11 +32,6 @@ public class CaretakerController {
 
     @GetMapping()
     public ResponseEntity<List<Caretaker>> getCaretakers() {
-        try{
-            return ResponseEntity.ok(caretakerService.getCaretakers());
-        }
-        catch(Exception e){
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(caretakerService.getCaretakers());
     }
 }
