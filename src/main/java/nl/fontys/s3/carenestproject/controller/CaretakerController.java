@@ -18,16 +18,8 @@ public class CaretakerController {
 
     @PostMapping()
     public ResponseEntity<String> createCaretakerAccount(@RequestBody @Validated CreateCaretakerAccountRequest request) {
-        try {
-            caretakerService.createCaretakerAccount(request);
-            return ResponseEntity.ok("Caretaker account created successfully.");
-        }
-        catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred while creating the caretaker account.");
-        }
+        caretakerService.createCaretakerAccount(request);
+        return ResponseEntity.ok("Caretaker account created successfully.");
     }
 
     @GetMapping()

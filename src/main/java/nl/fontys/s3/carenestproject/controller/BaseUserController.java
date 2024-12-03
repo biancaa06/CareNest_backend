@@ -6,11 +6,9 @@ import nl.fontys.s3.carenestproject.configuration.security.auth.RequestAuthentic
 import nl.fontys.s3.carenestproject.configuration.security.token.AccessToken;
 import nl.fontys.s3.carenestproject.domain.classes.users.User;
 import nl.fontys.s3.carenestproject.service.UserService;
-import nl.fontys.s3.carenestproject.service.exception.EmailExistsException;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
 import nl.fontys.s3.carenestproject.service.request.UpdateUserAddressRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +25,9 @@ public class BaseUserController {
 
     @PostMapping()
     public ResponseEntity<?> createBaseAccount(@RequestBody @Validated CreateBaseAccountRequest request) {
-        try {
+        CreateBaseAccountResponse response = userService.createUser(request);
+        return ResponseEntity.ok().body(response);
+        /*try {
             CreateBaseAccountResponse response = userService.createUser(request);
             if (response == null) {
                 return ResponseEntity.notFound().build();
@@ -37,7 +37,7 @@ public class BaseUserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getBody());
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
-        }
+        }*/
     }
 
     @GetMapping("/{id}")

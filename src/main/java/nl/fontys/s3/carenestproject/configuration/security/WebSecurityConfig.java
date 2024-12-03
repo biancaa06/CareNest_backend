@@ -43,8 +43,14 @@ public class WebSecurityConfig {
                         configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(registry ->
                         registry.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/caretaker/**", "/sickness/**").permitAll()
+                                .requestMatchers(HttpMethod.POST,
+                                        "/auth/**",
+                                        "/baseUser",
+                                        "/caretaker",
+                                        "/patient").permitAll()
+                                .requestMatchers(HttpMethod.GET,
+                                        "/caretaker/**",
+                                        "/sickness/**").permitAll()
                                 .requestMatchers(SWAGGER_UI_RESOURCES).permitAll()
                                 .anyRequest().authenticated()
                 )
