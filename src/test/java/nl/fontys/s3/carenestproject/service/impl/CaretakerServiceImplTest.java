@@ -108,7 +108,7 @@ class CaretakerServiceImplTest {
                 .availabilityId(1L)
                 .personalDescription("Test description")
                 .salaryPerHour(25.0)
-                .specialisations(List.of()) // Empty specialisations
+                .specialisations(List.of())
                 .build();
 
         UserEntity baseUser = mockUserEntity(baseUserId);
@@ -135,7 +135,7 @@ class CaretakerServiceImplTest {
         UserEntity baseUser = mockUserEntity(baseUserId);
 
         when(userRepo.findUserEntityById(baseUserId)).thenReturn(baseUser);
-        when(caretakerRepo.existsById(baseUserId)).thenReturn(true); // Simulate existing caretaker
+        when(caretakerRepo.existsById(baseUserId)).thenReturn(true);
 
         // Act & Assert
         InvalidParameterException exception = assertThrows(InvalidParameterException.class,

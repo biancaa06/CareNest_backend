@@ -110,19 +110,15 @@ class SicknessServiceImplTest {
     }
     @Test
     void createSickness_ShouldThrowException_WhenSaveFails() {
-        // Arrange: Create request with valid data
+        // Arrange
         CreateSicknessRequest request = CreateSicknessRequest.builder()
                 .name("New Sickness")
                 .build();
-
-        // Mock save to return null, simulating a save failure
         when(sicknessMockRepo.save(any(SicknessEntity.class))).thenReturn(null);
 
-        // Act and Assert: Expect IllegalStateException due to save failure
+        // Act and Assert
         assertThrows(IllegalStateException.class, () -> sicknessService.createSickness(request),
                 "Expected IllegalStateException when save operation fails");
-
-        // Verify save was attempted
         verify(sicknessMockRepo, times(1)).save(any(SicknessEntity.class));
     }
 

@@ -44,7 +44,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(registry ->
                         registry.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/caretaker/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/caretaker/**", "/sickness/**").permitAll()
                                 .requestMatchers(SWAGGER_UI_RESOURCES).permitAll()
                                 .anyRequest().authenticated()
                 )

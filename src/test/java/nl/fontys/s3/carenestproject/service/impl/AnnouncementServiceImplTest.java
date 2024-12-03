@@ -199,7 +199,7 @@ class AnnouncementServiceImplTest {
                 eq(id),
                 eq(request.getTitle()),
                 eq(request.getDescription()),
-                argThat(date -> Math.abs(date.getTime() - expectedDate.getTime()) < 1000) // Allow for slight time differences
+                argThat(date -> Math.abs(date.getTime() - expectedDate.getTime()) < 1000)
         );
     }
 
@@ -213,13 +213,8 @@ class AnnouncementServiceImplTest {
                 .description("Updated Description")
                 .build();
 
-        // Simulate `getAnnouncementById` returning null (announcement not found)
         when(announcementRepo.findAnnouncementEntityById(id)).thenReturn(null);
-
-        // Verify that `ObjectNotFoundException` is thrown
         assertThrows(ObjectNotFoundException.class, () -> announcementService.updateAnnouncement(id, request, userId));
-
-        // Ensure no updates are attempted
         verify(announcementRepo, never()).updateAnnouncementEntity(anyLong(), any(), any(), any());
     }
 
@@ -310,8 +305,8 @@ class AnnouncementServiceImplTest {
                 .firstName("John")
                 .lastName("Doe")
                 .email("john.doe@example.com")
-                .role(Role.MANAGER) // Set role
-                .gender(Gender.MALE) // Set gender with a valid value
+                .role(Role.MANAGER)
+                .gender(Gender.MALE)
                 .build();
     }
 

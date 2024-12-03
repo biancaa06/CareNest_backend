@@ -82,7 +82,7 @@ class PatientServiceImplTest {
         CreatePatientAccountRequest request = CreatePatientAccountRequest.builder()
                 .baseUserId(1L)
                 .personalDescription("Test description")
-                .sicknesses(List.of()) // Empty list
+                .sicknesses(List.of())
                 .build();
 
         // Act & Assert
@@ -96,7 +96,7 @@ class PatientServiceImplTest {
         CreatePatientAccountRequest request = CreatePatientAccountRequest.builder()
                 .baseUserId(1L)
                 .personalDescription("Test description")
-                .sicknesses(null) // Null sickness list
+                .sicknesses(null)
                 .build();
 
         // Act & Assert
@@ -136,8 +136,8 @@ class PatientServiceImplTest {
         // Verify interactions
         verify(userRepo, times(1)).findUserEntityById(baseUserId);
         verify(sicknessRepo, times(2)).findSicknessEntityById(anyLong());
-        verify(patientRepo, times(1)).save(any(PatientEntity.class)); // Patient saved
-        verify(sicknessOfPatientRepo, never()).save(any(SicknessesOfPatient.class)); // No sickness saved
+        verify(patientRepo, times(1)).save(any(PatientEntity.class));
+        verify(sicknessOfPatientRepo, never()).save(any(SicknessesOfPatient.class));
     }
 
 
