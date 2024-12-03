@@ -113,7 +113,7 @@ class UserServiceImplTest {
         assertNotNull(response);
         assertEquals(existingUser.getId(), response.getId());
         verify(userRepo, times(1)).findUserEntityByEmail(request.getEmail());
-        verify(userRepo, never()).save(any(UserEntity.class)); // Ensure no new user is saved
+        verify(userRepo, never()).save(any(UserEntity.class));
     }
 
 
@@ -137,8 +137,8 @@ class UserServiceImplTest {
     @Test
     void getUserById_ShouldThrowException_WhenIdIsInvalid() {
         // Arrange
-        long invalidId = 0L; // ID less than 1
-        long authenticatedUserId = 0L; // Match ID to avoid unauthorized exception
+        long invalidId = 0L;
+        long authenticatedUserId = 0L;
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
@@ -170,10 +170,10 @@ class UserServiceImplTest {
     void getUserById_ShouldSetProfileImage_WhenProfileImageIsNotNull() {
         // Arrange
         long userId = 1L;
-        byte[] profileImage = "Test Image".getBytes(); // Example byte array for the image
+        byte[] profileImage = "Test Image".getBytes();
 
         UserEntity userEntity = mockUserEntity(userId);
-        userEntity.setProfileImage(profileImage); // Set the profile image in the mock entity
+        userEntity.setProfileImage(profileImage);
 
         when(userRepo.findUserEntityById(userId)).thenReturn(userEntity);
 
@@ -234,7 +234,7 @@ class UserServiceImplTest {
         // Mock a user that is not active
         UserEntity inactiveUser = UserEntity.builder()
                 .id(userId)
-                .active(false) // Inactive user
+                .active(false)
                 .build();
 
         when(userRepo.findUserEntityById(userId)).thenReturn(inactiveUser);
@@ -244,7 +244,7 @@ class UserServiceImplTest {
 
         // Verify the interaction
         verify(userRepo, times(1)).findUserEntityById(userId);
-        verify(userRepo, never()).save(any(UserEntity.class)); // Ensure no save operation occurred
+        verify(userRepo, never()).save(any(UserEntity.class));
     }
 
 
@@ -303,7 +303,7 @@ class UserServiceImplTest {
     void updateProfilePicture_ShouldThrowException_WhenUnauthorized() throws IOException {
         // Arrange
         long userId = 1L;
-        long authenticatedUserId = 2L; // Different authenticated user
+        long authenticatedUserId = 2L;
         MultipartFile file = mock(MultipartFile.class);
 
         // Act & Assert
@@ -333,7 +333,7 @@ class UserServiceImplTest {
         MultipartFile file = mock(MultipartFile.class);
 
         when(userRepo.findUserEntityById(userId)).thenReturn(mockUserEntity(userId));
-        when(file.getContentType()).thenReturn(MediaType.APPLICATION_PDF_VALUE); // Invalid file type
+        when(file.getContentType()).thenReturn(MediaType.APPLICATION_PDF_VALUE);
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> userService.updateProfilePicture(file, userId, authenticatedUserId));
@@ -350,7 +350,7 @@ class UserServiceImplTest {
         UserEntity userEntity = mockUserEntity(userId);
         when(userRepo.findUserEntityById(userId)).thenReturn(userEntity);
         when(file.getContentType()).thenReturn(MediaType.IMAGE_JPEG_VALUE);
-        when(file.getBytes()).thenReturn(new byte[]{1, 2, 3, 4}); // Mock file bytes
+        when(file.getBytes()).thenReturn(new byte[]{1, 2, 3, 4});
 
         // Act
         userService.updateProfilePicture(file, userId, authenticatedUserId);
@@ -381,7 +381,7 @@ class UserServiceImplTest {
     // Utility methods for mocking
     private UserEntity mockUserEntity(long userId) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encodedPassword = encoder.encode("password"); // Match the raw password used in the test
+        String encodedPassword = encoder.encode("password");
 
         return UserEntity.builder()
                 .id(userId)
@@ -390,7 +390,7 @@ class UserServiceImplTest {
                 .email("john.doe@example.com")
                 .password(encodedPassword)
                 .gender(GenderEntity.builder().id(Gender.MALE.getValue()).genderName("MALE").build())
-                .roleId(RoleEntity.builder().id(Role.PATIENT.getValue()).roleName(Role.PATIENT.name()).build()) // Replace with a valid role
+                .roleId(RoleEntity.builder().id(Role.PATIENT.getValue()).roleName(Role.PATIENT.name()).build())
                 .active(true)
                 .build();
     }

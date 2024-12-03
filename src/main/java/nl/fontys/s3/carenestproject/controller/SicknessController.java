@@ -26,41 +26,27 @@ public class SicknessController {
         return ResponseEntity.ok(sicknessService.getAllSicknesses());
     }
     @GetMapping("/id:{id}")
-    public ResponseEntity<Sickness> getSicknessById(@PathVariable long id) {
-        return ResponseEntity.ok(sicknessService.getSicknessById(id));
+    public ResponseEntity<Sickness> getSicknessById(@PathVariable(value = "id") long id) {
+        return ResponseEntity.ok().body(sicknessService.getSicknessById(id));
     }
 
     @PostMapping()
     @RolesAllowed({"MANAGER"})
     public ResponseEntity<CreateSicknessResponse> createSickness(@RequestBody @Validated CreateSicknessRequest request) {
         CreateSicknessResponse response = sicknessService.createSickness(request);
-        if (response == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok().body(response);
     }
 
     @PutMapping("/id:{id}")
     @RolesAllowed({"MANAGER"})
     public ResponseEntity<UpdateSicknessResponse> updateSickness(@PathVariable(value = "id") long id, @RequestBody @Validated UpdateSicknessRequest request) {
-        try{
-            sicknessService.updateSickness(id,request);
-
-            return ResponseEntity.ok().build();
-        }
-        catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().build();
-        }
+        sicknessService.updateSickness(id,request);
+        return ResponseEntity.ok().build();
     }
     @DeleteMapping("/{id}")
     @RolesAllowed({"MANAGER"})
     public ResponseEntity<Void> deleteSickness(@PathVariable(value = "id") long id) {
-        try{
-            sicknessService.deleteSicknessById(id);
-            return ResponseEntity.noContent().build();
-        }
-        catch(IllegalArgumentException e){
-            return ResponseEntity.notFound().build();
-        }
+        sicknessService.deleteSicknessById(id);
+        return ResponseEntity.noContent().build();
     }
 }

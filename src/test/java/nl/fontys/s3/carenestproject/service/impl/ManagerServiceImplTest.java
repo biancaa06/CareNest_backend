@@ -66,8 +66,6 @@ class ManagerServiceImplTest {
         // Act & Assert
         UserNotActiveException exception = assertThrows(UserNotActiveException.class,
                 () -> managerService.getManagerById(managerId));
-
-        // Assert exception message includes the custom error
         assertEquals("404 NOT_FOUND \"Manager not found\"", exception.getMessage());
         verify(managerRepo, times(1)).findManagerEntityById(managerId);
     }
@@ -102,7 +100,7 @@ class ManagerServiceImplTest {
         // Arrange
         CreateManagerAccountRequest request = CreateManagerAccountRequest.builder()
                 .baseUserId(1L)
-                .position(99L) // Invalid position
+                .position(99L)
                 .build();
 
         when(positionRepo.existsById(request.getPosition())).thenReturn(false);
@@ -117,7 +115,7 @@ class ManagerServiceImplTest {
     void createManagerAccount_ShouldThrowException_WhenUserNotFound() {
         // Arrange
         CreateManagerAccountRequest request = CreateManagerAccountRequest.builder()
-                .baseUserId(99L) // Non-existing user
+                .baseUserId(99L)
                 .position(Position.PR.getValue())
                 .build();
 
@@ -206,7 +204,7 @@ class ManagerServiceImplTest {
                 .firstName("John")
                 .lastName("Doe")
                 .email("john.doe@example.com")
-                .gender(genderEntity) // Set GenderEntity
+                .gender(genderEntity)
                 .roleId(RoleEntity.builder()
                         .id(Role.MANAGER.getValue())
                         .roleName(Role.MANAGER.name())
