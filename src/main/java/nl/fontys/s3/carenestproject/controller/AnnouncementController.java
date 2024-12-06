@@ -22,6 +22,7 @@ public class AnnouncementController {
 
     private final AnnouncementService announcementService;
     private final RequestAuthenticatedUserProvider requestAuthenticatedUserProvider;
+    private final NotificationController notificationController;
 
     @GetMapping()
     @RolesAllowed({"MANAGER", "CARETAKER", "PATIENT"})
@@ -69,6 +70,9 @@ public class AnnouncementController {
         if (response == null) {
             return ResponseEntity.notFound().build();
         }
+        notificationController.sendAnnouncementNotification(
+                response.getAuthor().getBaseUser().getFirstName() + response.getAuthor().getBaseUser().getLastName(),
+                response.getTitle());
         return ResponseEntity.ok().body(response);
     }
 

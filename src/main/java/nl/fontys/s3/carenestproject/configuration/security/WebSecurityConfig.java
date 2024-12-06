@@ -43,6 +43,7 @@ public class WebSecurityConfig {
                         configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(registry ->
                         registry.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                .requestMatchers("/ws/**").permitAll()
                                 .requestMatchers(HttpMethod.POST,
                                         "/auth/**",
                                         "/baseUser",
