@@ -21,6 +21,7 @@ import nl.fontys.s3.carenestproject.service.mapping.AddressConverter;
 import nl.fontys.s3.carenestproject.service.mapping.BaseUserConverter;
 import nl.fontys.s3.carenestproject.service.request.AuthRequest;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
+import nl.fontys.s3.carenestproject.service.request.ResetPasswordRequest;
 import nl.fontys.s3.carenestproject.service.request.UpdateUserAddressRequest;
 import nl.fontys.s3.carenestproject.service.response.AuthResponse;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
     private final AccessTokenEncoder accessTokenEncoder;
     private final ResetPasswordCodeRepo resetPasswordRepo;
     private final MailService mailService;
+    private final ResetPasswordCodeRepo resetPasswordCodeRepo;
 
 
     @Override
@@ -207,6 +209,24 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void resetPassword(String email, ResetPasswordRequest request) {
+        UserEntity user = userRepo.findUserEntityByEmail(email);
+        if(user == null) {
+            throw new ObjectNotFoundException("User not found");
+        }
+        ResetPasswordCode code = resetPasswordCodeRepo.findByUser(user).orElseThrow(() -> new ObjectNotFoundException("A reset code was not requested for this user"));
+        if(!Objects.equals(code.getResetCode(), request.getResetCode())) {
+            throw new InvalidInputException("Please provide a valid reset code.");
+        }
+        if(code.getExpirationTime().before(Date.from(Instant.now()))) {
+            throw new TokenExpiredException("The code provided is expired");
+        }
+
+        user.setPassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
+        userRepo.save(user);
+    }
+
     private boolean matchesPassword(String rawPassword, String encodedPassword) {
         return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
     }
@@ -230,7 +250,7 @@ public class UserServiceImpl implements UserService {
         new ResetPasswordCode();
         ResetPasswordCode resetPasswordCode;
         if(resetPasswordRepo.existsByUser(user)){
-            resetPasswordCode = resetPasswordRepo.findByUser(user);
+            resetPasswordCode = resetPasswordRepo.findByUser(user).orElseThrow(() -> new ObjectNotFoundException("No reset code found"));
             resetPasswordCode.setResetCode(code);
             resetPasswordCode.setExpirationTime(expirationTime);
         }
