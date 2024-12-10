@@ -16,5 +16,6 @@ public interface UserService {
     void updateUserAddress(UpdateUserAddressRequest request, long userId, long authenticatedUserId);
     void updateProfilePicture(MultipartFile file, long userId, long authenticatedUserId) throws IOException;
     AuthResponse login(AuthRequest request);
+    void sendForgotPassword(String email);
 }
 

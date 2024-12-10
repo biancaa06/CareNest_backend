@@ -1,20 +1,22 @@
 package nl.fontys.s3.carenestproject.service.impl;
 
+import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import nl.fontys.s3.carenestproject.configuration.security.token.AccessTokenEncoder;
 import nl.fontys.s3.carenestproject.configuration.security.token.impl.AccessTokenImpl;
 import nl.fontys.s3.carenestproject.domain.classes.Address;
 import nl.fontys.s3.carenestproject.domain.classes.Gender;
 import nl.fontys.s3.carenestproject.domain.classes.users.User;
+import nl.fontys.s3.carenestproject.persistance.entity.ResetPasswordCode;
 import nl.fontys.s3.carenestproject.persistance.entity.GenderEntity;
 import nl.fontys.s3.carenestproject.persistance.entity.UserEntity;
+import nl.fontys.s3.carenestproject.persistance.repoInterfaces.ResetPasswordCodeRepo;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.UserRepo;
 import nl.fontys.s3.carenestproject.service.AddressService;
+import nl.fontys.s3.carenestproject.service.MailService;
 import nl.fontys.s3.carenestproject.service.UserService;
-import nl.fontys.s3.carenestproject.service.exception.EmailExistsException;
-import nl.fontys.s3.carenestproject.service.exception.InvalidCredentialsException;
-import nl.fontys.s3.carenestproject.service.exception.UnauthorizedException;
-import nl.fontys.s3.carenestproject.service.exception.UserNotActiveException;
+import nl.fontys.s3.carenestproject.service.exception.*;
 import nl.fontys.s3.carenestproject.service.mapping.AddressConverter;
 import nl.fontys.s3.carenestproject.service.mapping.BaseUserConverter;
 import nl.fontys.s3.carenestproject.service.request.AuthRequest;
@@ -28,9 +30,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -40,6 +42,8 @@ public class UserServiceImpl implements UserService {
     private final AddressService addressService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     private final AccessTokenEncoder accessTokenEncoder;
+    private final ResetPasswordCodeRepo resetPasswordRepo;
+    private final MailService mailService;
 
 
     @Override
@@ -162,6 +166,47 @@ public class UserServiceImpl implements UserService {
         return AuthResponse.builder().accessToken(accessToken).build();
     }
 
+    @Override
+    @Transactional
+    public void sendForgotPassword(String email) {
+        if(!userRepo.existsByEmail(email)) {
+            throw new ObjectNotFoundException("User not found");
+        }
+
+        UserEntity user = userRepo.findUserEntityByEmail(email);
+
+        Integer otp = generateResetCode(user);
+        String body = """
+            <!DOCTYPE html>
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <p>Dear <strong>%s</strong>,</p>
+        
+                <p>We received a request to reset the password for your CareNest account. A reset code has been generated for you:</p>
+        
+                <p><strong>Reset Code:</strong> <span style="font-size: 16px; color: #2e6b34;">%s</span></p>
+        
+                <p>Please use this code to log in to your account at: <a href="[CareNest Login URL]" target="_blank">CareNest Login</a></p>
+        
+                <p><strong>Note:</strong> This password is valid for <strong>5 minutes</strong> only. If you do not log in within this time, you will need to request a new password reset.</p>
+        
+                <p>If you did not request to reset your password, please ignore this email. Your password will remain unchanged.</p>
+        
+                <p>For any assistance, feel free to contact our support team.</p>
+        
+                <p>Best regards,</p>
+                <p>The CareNest Team</p>
+            </body>
+            </html>
+            """.formatted(user.getFirstName(), otp);
+
+        try{
+            mailService.sendHtmlEmail(email, "CareNest - Temporary Password for Your Account", body);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private boolean matchesPassword(String rawPassword, String encodedPassword) {
         return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
     }
@@ -174,6 +219,29 @@ public class UserServiceImpl implements UserService {
 
         return accessTokenEncoder.encode(
                 new AccessTokenImpl(user.getEmail(), studentId, roles));
+    }
+
+    private Integer generateResetCode(UserEntity user){
+        Random random = new Random();
+
+        Integer code = random.nextInt(100000, 999999);
+        Instant now = Instant.now();
+        Date expirationTime = Date.from(now.plus(5, ChronoUnit.MINUTES));
+        new ResetPasswordCode();
+        ResetPasswordCode resetPasswordCode;
+        if(resetPasswordRepo.existsByUser(user)){
+            resetPasswordCode = resetPasswordRepo.findByUser(user);
+            resetPasswordCode.setResetCode(code);
+            resetPasswordCode.setExpirationTime(expirationTime);
+        }
+        else{
+            resetPasswordCode = ResetPasswordCode.builder()
+                    .resetCode(code)
+                    .expirationTime(expirationTime)
+                    .user(user).build();
+        }
+        resetPasswordRepo.save(resetPasswordCode);
+        return code;
     }
 
 }

@@ -49,7 +49,8 @@ public class WebSecurityConfig {
                                         "/baseUser",
                                         "/caretaker",
                                         "/patient",
-                                        "/send-email/send").permitAll()
+                                        "/send-email/send",
+                                        "/reset-password/verify-email/{email}").permitAll()
                                 .requestMatchers(HttpMethod.GET,
                                         "/caretaker/**",
                                         "/sickness/**").permitAll()
