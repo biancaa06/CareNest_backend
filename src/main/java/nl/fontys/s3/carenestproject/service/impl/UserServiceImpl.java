@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     private final AccessTokenEncoder accessTokenEncoder;
 
+
     @Override
     public CreateBaseAccountResponse createUser(CreateBaseAccountRequest request) {
         UserEntity existingUser = userRepo.findUserEntityByEmail(request.getEmail());
