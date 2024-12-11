@@ -21,8 +21,6 @@ public class SpringCorsConfiguration {
                 registry.addMapping("/**")
                         .allowedOrigins(allowedOrigins)
                         .allowCredentials(true);
-                        //.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        //.allowedHeaders("Content-Type");
             }
         };
     }

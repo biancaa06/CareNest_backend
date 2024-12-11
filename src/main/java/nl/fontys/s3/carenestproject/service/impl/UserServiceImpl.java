@@ -48,6 +48,9 @@ public class UserServiceImpl implements UserService {
     private final ResetPasswordCodeRepo resetPasswordCodeRepo;
 
 
+    private final Random random = new Random();
+
+
     @Override
     public CreateBaseAccountResponse createUser(CreateBaseAccountRequest request) {
         UserEntity existingUser = userRepo.findUserEntityByEmail(request.getEmail());
@@ -242,7 +245,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private Integer generateResetCode(UserEntity user){
-        Random random = new Random();
 
         Integer code = random.nextInt(100000, 999999);
         Instant now = Instant.now();

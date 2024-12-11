@@ -48,10 +48,6 @@
             SicknessEntity sicknessEntity = SicknessEntity.builder().name(request.getName()).build();
             sicknessEntity = sicknessRepo.save(sicknessEntity);
 
-            if (sicknessEntity == null) {
-                throw new IllegalStateException("Failed to save sickness entity.");
-            }
-
             return CreateSicknessResponse.builder()
                     .id(sicknessEntity.getId())
                     .name(sicknessEntity.getName())
