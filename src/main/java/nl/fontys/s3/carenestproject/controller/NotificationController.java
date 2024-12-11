@@ -11,8 +11,8 @@ public class NotificationController {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    public void sendAnnouncementNotification(String authorName, String announcementTitle) {
-        AnnouncementNotification notification = new AnnouncementNotification(authorName, announcementTitle);
+    public void sendAnnouncementNotification(long authorId, String authorName, String announcementTitle) {
+        AnnouncementNotification notification = new AnnouncementNotification(authorId, authorName, announcementTitle);
         messagingTemplate.convertAndSend("/topic/announcements", notification);
     }
 }
