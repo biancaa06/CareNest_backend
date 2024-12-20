@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class AnnouncementNotification {
+    private long authorId;
     private String authorName;
     private String announcementTitle;
 }

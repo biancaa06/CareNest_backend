@@ -71,7 +71,8 @@ public class AnnouncementController {
             return ResponseEntity.notFound().build();
         }
         notificationController.sendAnnouncementNotification(
-                response.getAuthor().getBaseUser().getFirstName() + response.getAuthor().getBaseUser().getLastName(),
+                response.getAuthor().getBaseUser().getId(),
+                response.getAuthor().getBaseUser().getFirstName() + " " + response.getAuthor().getBaseUser().getLastName(),
                 response.getTitle());
         return ResponseEntity.ok().body(response);
     }

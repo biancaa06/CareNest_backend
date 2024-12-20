@@ -27,17 +27,6 @@ public class BaseUserController {
     public ResponseEntity<?> createBaseAccount(@RequestBody @Validated CreateBaseAccountRequest request) {
         CreateBaseAccountResponse response = userService.createUser(request);
         return ResponseEntity.ok().body(response);
-        /*try {
-            CreateBaseAccountResponse response = userService.createUser(request);
-            if (response == null) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok().body(response);
-        } catch (EmailExistsException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getBody());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
-        }*/
     }
 
     @GetMapping("/{id}")

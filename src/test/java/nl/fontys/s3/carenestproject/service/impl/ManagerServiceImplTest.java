@@ -7,6 +7,7 @@ import nl.fontys.s3.carenestproject.persistance.entity.*;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.ManagerRepo;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.PositionRepo;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.UserRepo;
+import nl.fontys.s3.carenestproject.service.MailService;
 import nl.fontys.s3.carenestproject.service.exception.UserNotActiveException;
 import nl.fontys.s3.carenestproject.service.mapping.PositionConverter;
 import nl.fontys.s3.carenestproject.service.request.CreateManagerAccountRequest;
@@ -32,6 +33,9 @@ class ManagerServiceImplTest {
 
     @Mock
     private ManagerRepo managerRepo;
+
+    @Mock
+    private MailService mailService;
 
     @InjectMocks
     private ManagerServiceImpl managerService;

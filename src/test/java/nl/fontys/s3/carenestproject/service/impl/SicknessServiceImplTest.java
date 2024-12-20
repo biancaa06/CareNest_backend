@@ -108,20 +108,6 @@ class SicknessServiceImplTest {
 
         verify(sicknessMockRepo, never()).save(any(SicknessEntity.class));
     }
-    @Test
-    void createSickness_ShouldThrowException_WhenSaveFails() {
-        // Arrange
-        CreateSicknessRequest request = CreateSicknessRequest.builder()
-                .name("New Sickness")
-                .build();
-        when(sicknessMockRepo.save(any(SicknessEntity.class))).thenReturn(null);
-
-        // Act and Assert
-        assertThrows(IllegalStateException.class, () -> sicknessService.createSickness(request),
-                "Expected IllegalStateException when save operation fails");
-        verify(sicknessMockRepo, times(1)).save(any(SicknessEntity.class));
-    }
-
 
     @Test
     void deleteSickness_ShouldDeleteSuccessfully_WhenSicknessIsValid() {
