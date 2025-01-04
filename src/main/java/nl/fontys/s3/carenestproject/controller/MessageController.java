@@ -7,6 +7,7 @@ import nl.fontys.s3.carenestproject.configuration.security.token.AccessToken;
 import nl.fontys.s3.carenestproject.service.MessageService;
 import nl.fontys.s3.carenestproject.service.request.message.GetMessagesInConversationRequest;
 import nl.fontys.s3.carenestproject.service.request.message.SendMessageRequest;
+import nl.fontys.s3.carenestproject.service.response.message.GetExistingConversationsResponse;
 import nl.fontys.s3.carenestproject.service.response.message.MessageResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -48,5 +49,14 @@ public class MessageController {
 
         List<MessageResponse> messages = messageService.getMessagesByParticipants(accessToken.getUserId(), request, contactedUserId);
         return ResponseEntity.ok(messages);
+    }
+
+    @GetMapping("/conversations/{connectedUserId}")
+    @RolesAllowed({"CARETAKER", "PATIENT"})
+    public ResponseEntity<List<GetExistingConversationsResponse>> getExistingConversations(@PathVariable Long connectedUserId){
+        AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
+
+        List<GetExistingConversationsResponse> response = messageService.getExistingConversations(accessToken.getUserId(), connectedUserId);
+        return ResponseEntity.ok(response);
     }
 }

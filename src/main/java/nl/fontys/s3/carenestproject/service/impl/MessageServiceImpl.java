@@ -12,6 +12,7 @@ import nl.fontys.s3.carenestproject.service.exception.UnauthorizedException;
 import nl.fontys.s3.carenestproject.service.mapping.MessageConverter;
 import nl.fontys.s3.carenestproject.service.request.message.GetMessagesInConversationRequest;
 import nl.fontys.s3.carenestproject.service.request.message.SendMessageRequest;
+import nl.fontys.s3.carenestproject.service.response.message.GetExistingConversationsResponse;
 import nl.fontys.s3.carenestproject.service.response.message.MessageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -68,6 +69,29 @@ public class MessageServiceImpl implements MessageService {
         }
 
         return messages;
+    }
+
+    @Override
+    public List<GetExistingConversationsResponse> getExistingConversations(Long authenticatedUserId, Long connectedUserId) {
+        if(!Objects.equals(authenticatedUserId, connectedUserId)) {
+            throw new UnauthorizedException("Not authorized");
+        }
+        if(!userRepo.existsById(connectedUserId)) {
+            throw new ObjectNotFoundException("User not found");
+        }
+        List<UserEntity> userEntities = userRepo.findUserEntitiesWithConversation(connectedUserId);
+
+        List<GetExistingConversationsResponse> responses = new ArrayList<>();
+
+        for(UserEntity userEntity : userEntities) {
+            responses.add(GetExistingConversationsResponse.builder()
+                    .userId(userEntity.getId())
+                    .userImage(userEntity.getProfileImage())
+                    .userName(userEntity.getFirstName() + " " + userEntity.getLastName())
+                    .build());
+        }
+
+        return responses;
     }
 
 
