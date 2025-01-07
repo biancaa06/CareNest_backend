@@ -36,7 +36,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageConverter messageConverter;
 
     @Override
-    public void sendMessage(Long receiverId, SendMessageRequest request, Long authenticatedUserId) {
+    public MessageResponse sendMessage(Long receiverId, SendMessageRequest request, Long authenticatedUserId) {
         if(!Objects.equals(authenticatedUserId, request.getSenderId())) {
             throw new UnauthorizedException("Not authorized");
         }
@@ -44,11 +44,19 @@ public class MessageServiceImpl implements MessageService {
         UserEntity sender = userRepo.findById(authenticatedUserId).orElseThrow(() -> new ObjectNotFoundException("Sender not found"));
         UserEntity receiver = userRepo.findById(receiverId).orElseThrow(() -> new ObjectNotFoundException("Receiver not found"));
 
-        messageRepo.save(MessageEntity.builder()
+        MessageEntity messageEntity= messageRepo.save(MessageEntity.builder()
                 .text(request.getText())
                 .date(LocalDateTime.now())
                 .sender(sender)
                 .receiver(receiver).build());
+
+        return MessageResponse.builder()
+                .id(messageEntity.getId())
+                .text(messageEntity.getText())
+                .date(messageEntity.getDate())
+                .senderId(messageEntity.getSender().getId())
+                .receiverId(messageEntity.getReceiver().getId())
+                .build();
     }
 
     @Override

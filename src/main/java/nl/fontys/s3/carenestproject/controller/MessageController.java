@@ -22,14 +22,16 @@ public class MessageController {
 
     private final MessageService messageService;
     private final RequestAuthenticatedUserProvider requestAuthenticatedUserProvider;
+    private final NotificationController notificationController;
 
     @PostMapping("/{receiverId}")
     @RolesAllowed({"CARETAKER", "PATIENT"})
-    public ResponseEntity<Void> sendMessage(@PathVariable Long receiverId, @RequestBody@Validated SendMessageRequest request){
+    public ResponseEntity<MessageResponse> sendMessage(@PathVariable Long receiverId, @RequestBody@Validated SendMessageRequest request){
         AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
 
-        messageService.sendMessage(receiverId, request, accessToken.getUserId());
-        return ResponseEntity.noContent().build();
+        MessageResponse response = messageService.sendMessage(receiverId, request, accessToken.getUserId());
+        notificationController.sendMessageNotification(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{contactedUserId}")
