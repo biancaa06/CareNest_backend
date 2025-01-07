@@ -17,6 +17,10 @@ public final class BaseUserConverter {
         if(userEntity.getAddress() != null) {
             address = AddressConverter.convertFromEntityToBase(userEntity.getAddress());
         }
+        byte[] profileImage = null;
+        if(userEntity.getProfileImage() != null) {
+            profileImage = userEntity.getProfileImage();
+        }
         else{
             address = null;
         }
@@ -29,6 +33,7 @@ public final class BaseUserConverter {
                 .role(Role.valueOf(userEntity.getRoleId().getRoleName()))
                 .phoneNumber(userEntity.getPhoneNumber())
                 .address(address)
+                .profileImage(profileImage)
                 .active(userEntity.isActive())
                 .build();
 
@@ -38,6 +43,11 @@ public final class BaseUserConverter {
         AddressEntity address = new AddressEntity();
         if (user.getAddress() != null) {
             address = AddressConverter.convertFromBaseToEntity(user.getAddress());
+        }
+
+        byte[] profileImage = null;
+        if(user.getProfileImage() != null) {
+            profileImage = user.getProfileImage();
         }
         else{
             address = null;
@@ -57,6 +67,7 @@ public final class BaseUserConverter {
                         .genderName(gender.toString())
                         .build())
                 .address(address)
+                .profileImage(profileImage)
                 .active(user.isActive())
                 .build();
     }

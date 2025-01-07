@@ -7,9 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import nl.fontys.s3.carenestproject.domain.classes.users.Manager;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 @SuperBuilder
@@ -22,7 +20,7 @@ public class AnnouncementEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private long id;
+    private Long id;
 
     @NotBlank
     @Column(name="title")

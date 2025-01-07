@@ -9,6 +9,7 @@ import nl.fontys.s3.carenestproject.persistance.repoInterfaces.SicknessRepo;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.UserRepo;
 import nl.fontys.s3.carenestproject.service.PatientService;
 import nl.fontys.s3.carenestproject.service.request.CreatePatientAccountRequest;
+import nl.fontys.s3.carenestproject.service.request.SicknessInputListRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,13 +39,25 @@ public class PatientServiceImpl implements PatientService {
         patientRepo.save(patient);
         userRepo.save(baseUser);
 
+        // Validate all sicknesses before saving
+        for (SicknessInputListRequest sicknessRequest : request.getSicknesses()) {
+            SicknessEntity sicknessEntity = sicknessRepo.findSicknessEntityById(sicknessRequest.getSicknessId());
+            if (sicknessEntity == null) {
+                throw new IllegalArgumentException("Sickness with ID " + sicknessRequest.getSicknessId() + " not found");
+            }
+        }
+
+        // Save all sicknesses after validation
         request.getSicknesses().forEach(sicknessRequest -> {
             SicknessEntity sicknessEntity = sicknessRepo.findSicknessEntityById(sicknessRequest.getSicknessId());
             SicknessesOfPatient sicknessItem = SicknessesOfPatient.builder()
-                            .patientId(patient)
-                            .sicknessId(sicknessEntity)
-                            .build();
+                    .patientId(patient)
+                    .sicknessId(sicknessEntity)
+                    .build();
             sicknessOfPatientRepo.save(sicknessItem);
         });
     }
+
+
+
 }

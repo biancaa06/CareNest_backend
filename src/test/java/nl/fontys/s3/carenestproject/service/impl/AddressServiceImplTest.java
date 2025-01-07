@@ -97,6 +97,59 @@ class AddressServiceImplTest {
 
         verify(addressRepo, times(1)).save(any(AddressEntity.class));
     }
+    @Test
+    void createAddress_ShouldReturnExistingAddress_WhenAddressAlreadyExists() {
+        Address address = Address.builder()
+                .country("Netherlands")
+                .city("Eindhoven")
+                .street("Fontys Street")
+                .number(10)
+                .build();
+
+        AddressEntity existingEntity = AddressEntity.builder()
+                .id(1L)
+                .country("Netherlands")
+                .city("Eindhoven")
+                .street("Fontys Street")
+                .number(10)
+                .build();
+
+        when(addressRepo.existsAddressEntitiesByCountryAndCityAndStreetAndNumber(
+                address.getCountry(),
+                address.getCity(),
+                address.getStreet(),
+                address.getNumber()))
+                .thenReturn(true);
+
+        when(addressRepo.findAddressEntityByCountryAndCityAndStreetAndNumber(
+                address.getCountry(),
+                address.getCity(),
+                address.getStreet(),
+                address.getNumber()))
+                .thenReturn(existingEntity);
+
+        Address result = addressService.createAddress(address);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("Netherlands", result.getCountry());
+        assertEquals("Eindhoven", result.getCity());
+        assertEquals("Fontys Street", result.getStreet());
+        assertEquals(10, result.getNumber());
+
+        verify(addressRepo, times(1)).existsAddressEntitiesByCountryAndCityAndStreetAndNumber(
+                address.getCountry(),
+                address.getCity(),
+                address.getStreet(),
+                address.getNumber());
+        verify(addressRepo, times(1)).findAddressEntityByCountryAndCityAndStreetAndNumber(
+                address.getCountry(),
+                address.getCity(),
+                address.getStreet(),
+                address.getNumber());
+        verify(addressRepo, never()).save(any(AddressEntity.class));
+    }
+
 
     @Test
     void deleteAddressById_ShouldReturnTrue_WhenDeletionIsSuccessful() {

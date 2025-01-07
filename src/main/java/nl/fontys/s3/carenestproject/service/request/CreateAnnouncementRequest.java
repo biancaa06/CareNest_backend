@@ -1,10 +1,9 @@
 package nl.fontys.s3.carenestproject.service.request;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 
-
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Data
 public class CreateAnnouncementRequest {

@@ -29,9 +29,14 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Address createAddress(Address address) {
 
-        AddressEntity addressEntity = AddressConverter.convertFromBaseToEntity(address);
+        AddressEntity addressEntity;
+        if(addressRepo.existsAddressEntitiesByCountryAndCityAndStreetAndNumber(address.getCountry(), address.getCity(), address.getStreet(), address.getNumber())) {
+            addressEntity = addressRepo.findAddressEntityByCountryAndCityAndStreetAndNumber(address.getCountry(), address.getCity(), address.getStreet(), address.getNumber());
+        }
+        else{
+            addressEntity = addressRepo.save(AddressConverter.convertFromBaseToEntity(address));
+        }
 
-        addressEntity = addressRepo.save(addressEntity);
 
         if (addressEntity == null) {
             throw new IllegalStateException("Failed to save address.");
