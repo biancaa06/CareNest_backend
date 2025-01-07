@@ -7,11 +7,14 @@ import nl.fontys.s3.carenestproject.domain.classes.Gender;
 import nl.fontys.s3.carenestproject.domain.classes.Role;
 import nl.fontys.s3.carenestproject.domain.classes.users.User;
 import nl.fontys.s3.carenestproject.persistance.entity.*;
+import nl.fontys.s3.carenestproject.persistance.repoInterfaces.ResetPasswordCodeRepo;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.UserRepo;
 import nl.fontys.s3.carenestproject.service.AddressService;
+import nl.fontys.s3.carenestproject.service.MailService;
 import nl.fontys.s3.carenestproject.service.exception.*;
 import nl.fontys.s3.carenestproject.service.request.AuthRequest;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
+import nl.fontys.s3.carenestproject.service.request.ResetPasswordRequest;
 import nl.fontys.s3.carenestproject.service.request.UpdateUserAddressRequest;
 import nl.fontys.s3.carenestproject.service.response.AuthResponse;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
@@ -21,12 +24,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.MessagingException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
+import java.time.Instant;
+import java.util.*;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,7 +42,13 @@ class UserServiceImplTest {
     private UserRepo userRepo;
 
     @Mock
+    private ResetPasswordCodeRepo resetPasswordCodeRepo;
+
+    @Mock
     private AddressService addressService;
+
+    @Mock
+    private MailService mailService;
 
     @Mock
     private AccessTokenEncoder accessTokenEncoder;
@@ -300,7 +312,7 @@ class UserServiceImplTest {
 
     //update picture
     @Test
-    void updateProfilePicture_ShouldThrowException_WhenUnauthorized() throws IOException {
+    void updateProfilePicture_ShouldThrowException_WhenUnauthorized() {
         // Arrange
         long userId = 1L;
         long authenticatedUserId = 2L;
@@ -312,7 +324,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void updateProfilePicture_ShouldThrowException_WhenUserNotActive() throws IOException {
+    void updateProfilePicture_ShouldThrowException_WhenUserNotActive() {
         // Arrange
         long userId = 1L;
         long authenticatedUserId = 1L;
@@ -326,7 +338,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void updateProfilePicture_ShouldThrowException_WhenFileTypeIsInvalid() throws IOException {
+    void updateProfilePicture_ShouldThrowException_WhenFileTypeIsInvalid() {
         // Arrange
         long userId = 1L;
         long authenticatedUserId = 1L;
@@ -375,6 +387,395 @@ class UserServiceImplTest {
         // Assert
         verify(userRepo, times(1)).save(userEntity);
         assertNull(userEntity.getProfileImage());
+    }
+
+    @Test
+    void testSendForgotPassword() throws Exception {
+        // Arrange
+        String email = "email";
+        UserEntity userEntity = mockUserEntity(1L);
+        when(userRepo.existsByEmail(email)).thenReturn(true);
+        when(userRepo.findUserEntityByEmail(email)).thenReturn(userEntity);
+        when(resetPasswordCodeRepo.existsByUser(userEntity)).thenReturn(false);
+
+        // Act
+        userService.sendForgotPassword(email);
+
+        // Assert
+        verify(resetPasswordCodeRepo).save(argThat(resetPasswordCode -> {
+            assertNotNull(resetPasswordCode);
+            assertEquals(userEntity, resetPasswordCode.getUser());
+            assertTrue(resetPasswordCode.getResetCode() > 0); // Ensure a valid reset code is generated
+            assertNotNull(resetPasswordCode.getExpirationTime());
+            return true;
+        }));
+        verify(mailService).sendHtmlEmail(eq(email), anyString(), anyString());
+    }
+
+
+    @Test
+    void testSendForgotPassword_UserRepoExistsByEmailReturnsFalse() {
+        // Setup
+        when(userRepo.existsByEmail("email")).thenReturn(false);
+
+        // Run the test
+        assertThatThrownBy(() -> userService.sendForgotPassword("email"))
+                .isInstanceOf(ObjectNotFoundException.class);
+    }
+
+    @Test
+    void testSendForgotPassword_ResetPasswordCodeRepoExistsByUserReturnsTrue() throws Exception {
+        // Arrange
+        String email = "email";
+        UserEntity userEntity = UserEntity.builder()
+                .id(0L)
+                .firstName("firstName")
+                .lastName("lastName")
+                .email(email)
+                .roleId(RoleEntity.builder().roleName("roleName").build())
+                .password("encodedPassword")
+                .phoneNumber("phoneNumber")
+                .address(AddressEntity.builder().id(0L).country("country").city("city").street("street").number(0).build())
+                .gender(GenderEntity.builder().id(0L).genderName("gender").build())
+                .profileImage("content".getBytes())
+                .active(false)
+                .build();
+
+        ResetPasswordCode existingCode = ResetPasswordCode.builder()
+                .resetCode(123456)
+                .expirationTime(new GregorianCalendar(2025, Calendar.JANUARY, 7, 9, 50).getTime()) // Existing code
+                .user(userEntity)
+                .build();
+
+        when(userRepo.existsByEmail(email)).thenReturn(true);
+        when(userRepo.findUserEntityByEmail(email)).thenReturn(userEntity);
+        when(resetPasswordCodeRepo.existsByUser(userEntity)).thenReturn(true);
+        when(resetPasswordCodeRepo.findByUser(userEntity)).thenReturn(Optional.of(existingCode));
+
+        // Run the test
+        userService.sendForgotPassword(email);
+
+        // Assert
+        verify(resetPasswordCodeRepo, times(1)).save(any(ResetPasswordCode.class)); // Ensure a new code is saved
+        verify(mailService, times(1)).sendHtmlEmail(eq(email), anyString(), anyString());
+    }
+
+
+
+    @Test
+    void testSendForgotPassword_ResetPasswordCodeRepoFindByUserReturnsAbsent() {
+        // Setup
+        when(userRepo.existsByEmail("email")).thenReturn(true);
+
+        // Configure UserRepo.findUserEntityByEmail(...).
+        final UserEntity userEntity = UserEntity.builder()
+                .id(0L)
+                .firstName("firstName")
+                .lastName("lastName")
+                .email("email")
+                .roleId(RoleEntity.builder()
+                        .roleName("roleName")
+                        .build())
+                .password("encodedPassword")
+                .phoneNumber("phoneNumber")
+                .address(AddressEntity.builder()
+                        .id(0L)
+                        .country("country")
+                        .city("city")
+                        .street("street")
+                        .number(0)
+                        .build())
+                .gender(GenderEntity.builder()
+                        .id(0L)
+                        .genderName("gender")
+                        .build())
+                .profileImage("content".getBytes())
+                .active(false)
+                .build();
+        when(userRepo.findUserEntityByEmail("email")).thenReturn(userEntity);
+
+        when(resetPasswordCodeRepo.existsByUser(UserEntity.builder()
+                .id(0L)
+                .firstName("firstName")
+                .lastName("lastName")
+                .email("email")
+                .roleId(RoleEntity.builder()
+                        .roleName("roleName")
+                        .build())
+                .password("encodedPassword")
+                .phoneNumber("phoneNumber")
+                .address(AddressEntity.builder()
+                        .id(0L)
+                        .country("country")
+                        .city("city")
+                        .street("street")
+                        .number(0)
+                        .build())
+                .gender(GenderEntity.builder()
+                        .id(0L)
+                        .genderName("gender")
+                        .build())
+                .profileImage("content".getBytes())
+                .active(false)
+                .build())).thenReturn(true);
+        when(resetPasswordCodeRepo.findByUser(UserEntity.builder()
+                .id(0L)
+                .firstName("firstName")
+                .lastName("lastName")
+                .email("email")
+                .roleId(RoleEntity.builder()
+                        .roleName("roleName")
+                        .build())
+                .password("encodedPassword")
+                .phoneNumber("phoneNumber")
+                .address(AddressEntity.builder()
+                        .id(0L)
+                        .country("country")
+                        .city("city")
+                        .street("street")
+                        .number(0)
+                        .build())
+                .gender(GenderEntity.builder()
+                        .id(0L)
+                        .genderName("gender")
+                        .build())
+                .profileImage("content".getBytes())
+                .active(false)
+                .build())).thenReturn(Optional.empty());
+
+        // Run the test
+        assertThatThrownBy(() -> userService.sendForgotPassword("email"))
+                .isInstanceOf(ObjectNotFoundException.class);
+    }
+
+    @Test
+    void testSendForgotPassword_MailServiceThrowsMessagingException() throws Exception {
+        // Arrange
+        String email = "email";
+        UserEntity userEntity = UserEntity.builder()
+                .id(0L)
+                .firstName("firstName")
+                .lastName("lastName")
+                .email(email)
+                .roleId(RoleEntity.builder().roleName("roleName").build())
+                .password("encodedPassword")
+                .phoneNumber("phoneNumber")
+                .address(AddressEntity.builder().id(0L).country("country").city("city").street("street").number(0).build())
+                .gender(GenderEntity.builder().id(0L).genderName("gender").build())
+                .profileImage("content".getBytes())
+                .active(false)
+                .build();
+
+        when(userRepo.existsByEmail(email)).thenReturn(true);
+        when(userRepo.findUserEntityByEmail(email)).thenReturn(userEntity);
+        when(resetPasswordCodeRepo.existsByUser(userEntity)).thenReturn(false);
+
+        doThrow(MessagingException.class).when(mailService).sendHtmlEmail(
+                eq(email), eq("CareNest - Temporary Password for Your Account"), anyString());
+
+        // Act & Assert
+        assertThatThrownBy(() -> userService.sendForgotPassword(email))
+                .isInstanceOf(RuntimeException.class);
+
+        verify(resetPasswordCodeRepo, times(1)).save(any(ResetPasswordCode.class));
+    }
+
+    @Test
+    void testResetPassword() {
+        // Setup
+        final ResetPasswordRequest request = ResetPasswordRequest.builder()
+                .resetCode(0)
+                .newPassword("newPassword")
+                .build();
+
+        final UserEntity userEntity = UserEntity.builder()
+                .id(0L)
+                .firstName("firstName")
+                .lastName("lastName")
+                .email("email")
+                .roleId(RoleEntity.builder()
+                        .roleName("roleName")
+                        .build())
+                .password("encodedPassword")
+                .phoneNumber("phoneNumber")
+                .address(AddressEntity.builder()
+                        .id(0L)
+                        .country("country")
+                        .city("city")
+                        .street("street")
+                        .number(0)
+                        .build())
+                .gender(GenderEntity.builder()
+                        .id(0L)
+                        .genderName("gender")
+                        .build())
+                .profileImage("content".getBytes())
+                .active(false)
+                .build();
+
+        final ResetPasswordCode resetPasswordCode = ResetPasswordCode.builder()
+                .resetCode(0)
+                .expirationTime(Date.from(Instant.now().plusSeconds(300))) // 5 minutes from now
+                .user(userEntity)
+                .build();
+
+        when(userRepo.findUserEntityByEmail("email")).thenReturn(userEntity);
+        when(resetPasswordCodeRepo.findByUser(userEntity)).thenReturn(Optional.of(resetPasswordCode));
+
+        // Act
+        userService.resetPassword("email", request);
+
+        //Assert
+        verify(userRepo, times(1)).save(argThat(user ->
+                user.getPassword() != null && !user.getPassword().equals("encodedPassword")
+        ));
+    }
+
+
+    @Test
+    void testResetPassword_UserRepoFindUserEntityByEmailReturnsNull() {
+        // Setup
+        final ResetPasswordRequest request = ResetPasswordRequest.builder()
+                .resetCode(0)
+                .newPassword("newPassword")
+                .build();
+        when(userRepo.findUserEntityByEmail("email")).thenReturn(null);
+
+        // Run the test
+        assertThatThrownBy(() -> userService.resetPassword("email", request))
+                .isInstanceOf(ObjectNotFoundException.class);
+    }
+
+    @Test
+    void testResetPassword_ResetPasswordCodeRepoReturnsAbsent() {
+        // Setup
+        final ResetPasswordRequest request = ResetPasswordRequest.builder()
+                .resetCode(0)
+                .newPassword("newPassword")
+                .build();
+
+        // Configure UserRepo.findUserEntityByEmail(...).
+        final UserEntity userEntity = UserEntity.builder()
+                .id(0L)
+                .firstName("firstName")
+                .lastName("lastName")
+                .email("email")
+                .roleId(RoleEntity.builder()
+                        .roleName("roleName")
+                        .build())
+                .password("encodedPassword")
+                .phoneNumber("phoneNumber")
+                .address(AddressEntity.builder()
+                        .id(0L)
+                        .country("country")
+                        .city("city")
+                        .street("street")
+                        .number(0)
+                        .build())
+                .gender(GenderEntity.builder()
+                        .id(0L)
+                        .genderName("gender")
+                        .build())
+                .profileImage("content".getBytes())
+                .active(false)
+                .build();
+        when(userRepo.findUserEntityByEmail("email")).thenReturn(userEntity);
+
+        when(resetPasswordCodeRepo.findByUser(UserEntity.builder()
+                .id(0L)
+                .firstName("firstName")
+                .lastName("lastName")
+                .email("email")
+                .roleId(RoleEntity.builder()
+                        .roleName("roleName")
+                        .build())
+                .password("encodedPassword")
+                .phoneNumber("phoneNumber")
+                .address(AddressEntity.builder()
+                        .id(0L)
+                        .country("country")
+                        .city("city")
+                        .street("street")
+                        .number(0)
+                        .build())
+                .gender(GenderEntity.builder()
+                        .id(0L)
+                        .genderName("gender")
+                        .build())
+                .profileImage("content".getBytes())
+                .active(false)
+                .build())).thenReturn(Optional.empty());
+
+        // Run the test
+        assertThatThrownBy(() -> userService.resetPassword("email", request))
+                .isInstanceOf(ObjectNotFoundException.class);
+    }
+
+    @Test
+    void testResetPassword_InvalidResetCode() {
+        // Setup
+        final ResetPasswordRequest request = ResetPasswordRequest.builder()
+                .resetCode(1) // Provided code does not match stored code
+                .newPassword("newPassword")
+                .build();
+
+        final UserEntity userEntity = UserEntity.builder()
+                .id(0L)
+                .email("email")
+                .build();
+
+        final ResetPasswordCode resetPasswordCode = ResetPasswordCode.builder()
+                .resetCode(0) // Stored code
+                .expirationTime(Date.from(Instant.now().plusSeconds(300))) // Not expired
+                .user(userEntity)
+                .build();
+
+        when(userRepo.findUserEntityByEmail("email")).thenReturn(userEntity);
+        when(resetPasswordCodeRepo.findByUser(userEntity)).thenReturn(Optional.of(resetPasswordCode));
+
+        // Run the test
+        InvalidInputException exception = assertThrows(InvalidInputException.class, () ->
+                userService.resetPassword("email", request)
+        );
+
+        // Assert
+        assertTrue(exception.getMessage().contains("Please provide a valid reset code."),
+                "Expected exception message to contain 'Please provide a valid reset code.'");
+        verify(userRepo, never()).save(any());
+        verify(resetPasswordCodeRepo, never()).delete(any());
+    }
+
+    @Test
+    void testResetPassword_ExpiredResetCode() {
+        // Setup
+        final ResetPasswordRequest request = ResetPasswordRequest.builder()
+                .resetCode(0) // Correct code
+                .newPassword("newPassword")
+                .build();
+
+        final UserEntity userEntity = UserEntity.builder()
+                .id(0L)
+                .email("email")
+                .build();
+
+        final ResetPasswordCode resetPasswordCode = ResetPasswordCode.builder()
+                .resetCode(0) // Stored code matches
+                .expirationTime(Date.from(Instant.now().minusSeconds(10))) // Expired
+                .user(userEntity)
+                .build();
+
+        when(userRepo.findUserEntityByEmail("email")).thenReturn(userEntity);
+        when(resetPasswordCodeRepo.findByUser(userEntity)).thenReturn(Optional.of(resetPasswordCode));
+
+        // Run the test and Assert
+        TokenExpiredException exception = assertThrows(TokenExpiredException.class, () ->
+                userService.resetPassword("email", request)
+        );
+
+        assertTrue(exception.getMessage().contains("The code provided is expired"),
+                "Expected exception message to contain 'The code provided is expired'");
+        verify(userRepo, never()).save(any());
+        verify(resetPasswordCodeRepo, never()).delete(any());
     }
 
 
