@@ -22,9 +22,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -243,6 +245,68 @@ class AnnouncementServiceImplTest {
 
         verify(announcementRepo, times(1)).deleteAnnouncementById(id);
     }
+
+    @Test
+    void getAnnouncementsByAuthor_ShouldReturnAnnouncements_WhenAuthorExistsAndHasAnnouncements() {
+        // Arrange
+        long authorId = 1L;
+        ManagerEntity authorEntity = mockAnnouncementEntityWithUser(authorId).getAuthor();
+        AnnouncementEntity announcementEntity = mockAnnouncementEntityWithUser(authorId);
+
+        when(managerRepo.existsById(authorId)).thenReturn(true);
+        when(managerRepo.findManagerEntityById(authorId)).thenReturn(authorEntity);
+        when(announcementRepo.findAnnouncementEntitiesByAuthor(authorEntity)).thenReturn(List.of(announcementEntity));
+
+        // Act
+        List<Announcement> announcements = announcementService.getAnnouncementsByAuthor(authorId);
+
+        // Assert
+        assertNotNull(announcements);
+        assertEquals(1, announcements.size());
+        assertEquals(announcementEntity.getTitle(), announcements.get(0).getTitle());
+        assertEquals(announcementEntity.getDescription(), announcements.get(0).getDescription());
+        verify(managerRepo, times(1)).existsById(authorId);
+        verify(managerRepo, times(1)).findManagerEntityById(authorId);
+        verify(announcementRepo, times(1)).findAnnouncementEntitiesByAuthor(authorEntity);
+    }
+
+    @Test
+    void getAnnouncementsByAuthor_ShouldThrowException_WhenAuthorDoesNotExist() {
+        // Arrange
+        long authorId = 1L;
+        when(managerRepo.existsById(authorId)).thenReturn(false);
+
+        // Run the test
+        assertThatThrownBy(() -> announcementService.getAnnouncementsByAuthor(authorId))
+                .isInstanceOf(ObjectNotFoundException.class)
+                .hasMessageContaining("Author with ID " + authorId + " not found");
+
+        verify(managerRepo, times(1)).existsById(authorId);
+        verify(managerRepo, never()).findManagerEntityById(anyLong());
+        verify(announcementRepo, never()).findAnnouncementEntitiesByAuthor(any());
+    }
+
+    @Test
+    void getAnnouncementsByAuthor_ShouldReturnEmptyList_WhenAuthorExistsButHasNoAnnouncements() {
+        // Arrange
+        long authorId = 1L;
+        ManagerEntity authorEntity = mockAnnouncementEntityWithUser(authorId).getAuthor();
+
+        when(managerRepo.existsById(authorId)).thenReturn(true);
+        when(managerRepo.findManagerEntityById(authorId)).thenReturn(authorEntity);
+        when(announcementRepo.findAnnouncementEntitiesByAuthor(authorEntity)).thenReturn(new ArrayList<>());
+
+        // Act
+        List<Announcement> announcements = announcementService.getAnnouncementsByAuthor(authorId);
+
+        // Assert
+        assertNotNull(announcements);
+        assertTrue(announcements.isEmpty());
+        verify(managerRepo, times(1)).existsById(authorId);
+        verify(managerRepo, times(1)).findManagerEntityById(authorId);
+        verify(announcementRepo, times(1)).findAnnouncementEntitiesByAuthor(authorEntity);
+    }
+
 
     // Utility Methods
     private AnnouncementEntity mockAnnouncementEntityWithUser(long userId) {
