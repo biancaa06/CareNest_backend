@@ -7,6 +7,7 @@ import nl.fontys.s3.carenestproject.service.request.ResetPasswordRequest;
 import nl.fontys.s3.carenestproject.service.request.UpdateUserAddressRequest;
 import nl.fontys.s3.carenestproject.service.response.AuthResponse;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
+import nl.fontys.s3.carenestproject.service.response.StatisticsResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -19,5 +20,6 @@ public interface UserService {
     AuthResponse login(AuthRequest request);
     void sendForgotPassword(String email);
     void resetPassword(String email, ResetPasswordRequest request);
+    StatisticsResponse getCaretakerToPatientStats();
 }
 

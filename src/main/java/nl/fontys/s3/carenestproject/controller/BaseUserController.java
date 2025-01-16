@@ -9,6 +9,7 @@ import nl.fontys.s3.carenestproject.service.UserService;
 import nl.fontys.s3.carenestproject.service.request.CreateBaseAccountRequest;
 import nl.fontys.s3.carenestproject.service.request.UpdateUserAddressRequest;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
+import nl.fontys.s3.carenestproject.service.response.StatisticsResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -70,6 +71,13 @@ public class BaseUserController {
         catch (IOException e) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("/statistics")
+    @RolesAllowed({"MANAGER"})
+    public ResponseEntity<StatisticsResponse> getStatistics() {
+        StatisticsResponse response = userService.getCaretakerToPatientStats();
+        return ResponseEntity.ok().body(response);
     }
 
 }

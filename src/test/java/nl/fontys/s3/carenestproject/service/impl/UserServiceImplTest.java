@@ -18,6 +18,7 @@ import nl.fontys.s3.carenestproject.service.request.ResetPasswordRequest;
 import nl.fontys.s3.carenestproject.service.request.UpdateUserAddressRequest;
 import nl.fontys.s3.carenestproject.service.response.AuthResponse;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
+import nl.fontys.s3.carenestproject.service.response.StatisticsResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -796,5 +797,56 @@ class UserServiceImplTest {
                 .build();
     }
 
+    @Test
+    void getCaretakerToPatientStats_ShouldReturnValidStatisticsResponse() {
+        // Arrange
+        List<Object[]> mockResults = new ArrayList<>();
+        mockResults.add(new Object[]{50L, 200L, 4.0});
+        when(userRepo.getCaretakerToPatientStats()).thenReturn(mockResults);
+
+        // Act
+        StatisticsResponse response = userService.getCaretakerToPatientStats();
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(50L, response.getTotalCaretakers());
+        assertEquals(200L, response.getTotalPatients());
+        assertEquals(4.0, response.getCaretakerToPatientRatio());
+
+        verify(userRepo, times(1)).getCaretakerToPatientStats();
+    }
+
+    @Test
+    void getCaretakerToPatientStats_ShouldReturnNullWhenNoResults() {
+        // Arrange
+        when(userRepo.getCaretakerToPatientStats()).thenReturn(new ArrayList<>());
+
+        // Act
+        StatisticsResponse response = userService.getCaretakerToPatientStats();
+
+        // Assert
+        assertNull(response);
+        verify(userRepo, times(1)).getCaretakerToPatientStats();
+    }
+
+    @Test
+    void getCaretakerToPatientStats_ShouldHandleMultipleRowsButReturnLastRow() {
+        // Arrange
+        List<Object[]> mockResults = new ArrayList<>();
+        mockResults.add(new Object[]{30L, 100L, 3.33});
+        mockResults.add(new Object[]{50L, 200L, 4.0});
+        when(userRepo.getCaretakerToPatientStats()).thenReturn(mockResults);
+
+        // Act
+        StatisticsResponse response = userService.getCaretakerToPatientStats();
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(50L, response.getTotalCaretakers());
+        assertEquals(200L, response.getTotalPatients());
+        assertEquals(4.0, response.getCaretakerToPatientRatio());
+
+        verify(userRepo, times(1)).getCaretakerToPatientStats();
+    }
 
 }

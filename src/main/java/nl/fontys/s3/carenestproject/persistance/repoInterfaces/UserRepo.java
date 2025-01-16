@@ -19,4 +19,12 @@ public interface UserRepo extends JpaRepository<UserEntity, Long> {
     AND u.id != :userId
     """)
     List<UserEntity> findUserEntitiesWithConversation(Long userId);
+
+    @Query(value = "SELECT " +
+            "  (SELECT COUNT(*) FROM caretaker) AS total_caretakers, " +
+            "  (SELECT COUNT(*) FROM patient) AS total_patients, " +
+            "  ROUND((CAST((SELECT COUNT(*) FROM patient) AS FLOAT) / " +
+            "        (SELECT COUNT(*) FROM caretaker)), 2) AS caretaker_to_patient_ratio",
+            nativeQuery = true)
+    List<Object[]> getCaretakerToPatientStats();
 }

@@ -25,6 +25,7 @@ import nl.fontys.s3.carenestproject.service.request.ResetPasswordRequest;
 import nl.fontys.s3.carenestproject.service.request.UpdateUserAddressRequest;
 import nl.fontys.s3.carenestproject.service.response.AuthResponse;
 import nl.fontys.s3.carenestproject.service.response.CreateBaseAccountResponse;
+import nl.fontys.s3.carenestproject.service.response.StatisticsResponse;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -229,6 +230,24 @@ public class UserServiceImpl implements UserService {
         user.setPassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
         userRepo.save(user);
     }
+
+        @Override
+        public StatisticsResponse getCaretakerToPatientStats() {
+            List<Object[]> results = userRepo.getCaretakerToPatientStats();
+
+            StatisticsResponse responseList = null;
+
+            for (Object[] row : results) {
+                StatisticsResponse dto = new StatisticsResponse();
+                dto.setTotalCaretakers(((Number) row[0]).longValue());
+                dto.setTotalPatients(((Number) row[1]).longValue());
+                dto.setCaretakerToPatientRatio(((Number) row[2]).doubleValue());
+                responseList = dto;
+            }
+
+            return responseList;
+        }
+
 
     private boolean matchesPassword(String rawPassword, String encodedPassword) {
         return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
