@@ -2,7 +2,6 @@ package nl.fontys.s3.carenestproject.controller;
 
 import nl.fontys.s3.carenestproject.persistance.entity.SicknessEntity;
 import nl.fontys.s3.carenestproject.persistance.repoInterfaces.SicknessRepo;
-import nl.fontys.s3.carenestproject.service.request.UpdateSicknessRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,26 +55,6 @@ class SicknessControllerTest {
                         ]
                         """));
     }
-
-    /*@Test
-    void getSicknessById_ShouldReturn200AndSickness() throws Exception {
-        // Arrange
-        SicknessEntity sickness = SicknessEntity.builder().id(1L).name("Flu").build();
-        when(sicknessRepo.findById(1L)).thenReturn(Optional.of(sickness));
-
-        // Act & Assert
-        mockMvc.perform(get("/sickness/id:1") // Correct endpoint
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()) // Expecting 200 OK
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON)) // Content type should be application/json
-                .andExpect(content().json("""
-                {
-                    "id": 1,
-                    "name": "Flu"
-                }
-                """)); // Single object, not an array
-    }*/
-
 
     @Test
     @WithMockUser(roles = {"MANAGER"})
@@ -134,10 +113,6 @@ class SicknessControllerTest {
         // Arrange
         long id = 1L;
         String newName = "Updated Sickness Name";
-
-        UpdateSicknessRequest updateRequest = UpdateSicknessRequest.builder()
-                .newSicknessName(newName)
-                .build();
 
         SicknessEntity existingSickness = SicknessEntity.builder().id(id).name("Old Sickness Name").build();
         SicknessEntity updatedSickness = SicknessEntity.builder().id(id).name(newName).build();

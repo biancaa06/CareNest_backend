@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,7 +69,7 @@ public class MessageServiceImpl implements MessageService {
         UserEntity connectedUser = userRepo.findById(request.getConnectedUserId()).orElseThrow(() -> new ObjectNotFoundException("User not found"));
         UserEntity contactedUser = userRepo.findById(contactedUserId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
 
-        Pageable pageable = PageRequest.of(request.getPageNumber(), request.getItemsPerPage(), Sort.by("date").ascending());
+        Pageable pageable = PageRequest.of(request.getPageNumber(), request.getItemsPerPage(), Sort.by("date").descending());
         Page<MessageEntity> messageEntities = messageRepo.findMessageEntitiesByParticipants(connectedUser, contactedUser, pageable);
 
         List<MessageResponse> messages = new ArrayList<>();
@@ -76,6 +77,7 @@ public class MessageServiceImpl implements MessageService {
             messages.add(messageConverter.convertFromEntityToResponse(messageEntity));
         }
 
+        Collections.reverse(messages);
         return messages;
     }
 

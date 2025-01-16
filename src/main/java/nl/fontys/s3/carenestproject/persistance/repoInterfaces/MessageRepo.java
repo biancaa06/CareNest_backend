@@ -11,7 +11,7 @@ public interface MessageRepo extends JpaRepository<MessageEntity, Integer> {
     @Query("""
     SELECT m
     FROM MessageEntity m
-    WHERE (m.receiver = :receiver OR m.sender = :receiver) OR (m.receiver = :sender OR m.sender = :sender)
+    WHERE (m.receiver = :receiver AND m.sender = :sender) OR (m.receiver = :sender AND m.sender = :receiver)
     """)
     Page<MessageEntity> findMessageEntitiesByParticipants(UserEntity sender, UserEntity receiver, Pageable pageable);
 }
